@@ -41,7 +41,7 @@ import net.minecraft.world.phys.Vec3;
  *
  * <p>Instances are immutable and safe to iterate concurrently.
  *
- * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript-2026-10-06-17647dd8-8de1-4b0b-b68d-89a2d0ee63a8.md}.
+ * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-06_17647dd8-8de1-4b0b-b68d-89a2d0ee63a8.md}.
  */
 public final class InnerSpace implements Iterable<InnerSpacePos> {
 

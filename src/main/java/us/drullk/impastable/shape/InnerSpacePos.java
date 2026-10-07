@@ -10,7 +10,7 @@ import net.minecraft.core.BlockPos;
  * this block is pasta by looking only at the inner coordinates (distance from the inner axis, angle around it,
  * position along it, ...).
  *
- * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript-2026-10-06-17647dd8-8de1-4b0b-b68d-89a2d0ee63a8.md}.
+ * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-06_17647dd8-8de1-4b0b-b68d-89a2d0ee63a8.md}.
  */
 public record InnerSpacePos(int worldX, int worldY, int worldZ, float innerX, float innerY, float innerZ) {
 

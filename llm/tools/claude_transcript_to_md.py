@@ -26,7 +26,7 @@ Usage:
     python3 llm/tools/claude_transcript_to_md.py --print-path    # just print where the latest session would go
     python3 llm/tools/claude_transcript_to_md.py --session 17647dd8 --include-results -o out.md
 
-This tool was itself written by Claude Code; see llm/transcripts/transcript-2026-10-06-17647dd8-8de1-4b0b-b68d-89a2d0ee63a8.md.
+This tool was itself written by Claude Code; see llm/transcripts/transcript_2026-10-06_17647dd8-8de1-4b0b-b68d-89a2d0ee63a8.md.
 """
 from __future__ import annotations
 
@@ -273,7 +273,7 @@ def export(path: Path, include_results: bool, max_chars: int, self_path: str | N
 def default_relative_path(summary: dict) -> Path:
     started = parse_ts(summary["start"])
     date = started.strftime("%Y-%m-%d") if started else "unknown-date"
-    return TRANSCRIPT_DIR / f"transcript-{date}-{summary['id']}.md"
+    return TRANSCRIPT_DIR / f"transcript_{date}_{summary['id']}.md"
 
 
 def find_superseded(project: Path, summary: dict, new_rel: Path) -> Path | None:
