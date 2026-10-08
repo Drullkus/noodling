@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Unit tests for {@link InnerSpace}: a single-block canary, uniqueness of world and inner positions, and
+ * Unit tests for {@link InnerSpaceIterable}: a single-block canary, uniqueness of world and inner positions, and
  * equivalence with a brute-force scan.
  *
  * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-06_17647dd8-8de1-4b0b-b68d-89a2d0ee63a8.md}.
@@ -34,19 +34,19 @@ class InnerSpaceTest {
     /** The sample spaces that the property-style tests run over. */
     static Stream<Arguments> spaces() {
         List<Arguments> out = new ArrayList<>();
-        out.add(Arguments.of("axis-aligned cornered", InnerSpace.cornered(new Vec3(10, 64, -7), new Quaterniond(), 3, 4, 5)));
-        out.add(Arguments.of("axis-aligned centered on block centre", InnerSpace.centered(new Vec3(0.5, 0.5, 0.5), new Quaterniond(), 4, 4, 4)));
-        out.add(Arguments.of("90 degrees about Y", InnerSpace.cornered(new Vec3(0, 0, 0), new Quaterniond().rotationY(Math.PI / 2), 2, 3, 7)));
-        out.add(Arguments.of("diagonal noodle segment", InnerSpace.segment(new Vec3(0, 0, 0), new Vec3(40, 11, 23), 2, 2)));
-        out.add(Arguments.of("vertical segment", InnerSpace.segment(new Vec3(1, 1, 1), new Vec3(1, 30, 1), 3, 3)));
+        out.add(Arguments.of("axis-aligned cornered", InnerSpaceIterable.cornered(new Vec3(10, 64, -7), new Quaterniond(), 3, 4, 5)));
+        out.add(Arguments.of("axis-aligned centered on block centre", InnerSpaceIterable.centered(new Vec3(0.5, 0.5, 0.5), new Quaterniond(), 4, 4, 4)));
+        out.add(Arguments.of("90 degrees about Y", InnerSpaceIterable.cornered(new Vec3(0, 0, 0), new Quaterniond().rotationY(Math.PI / 2), 2, 3, 7)));
+        out.add(Arguments.of("diagonal noodle segment", InnerSpaceIterable.segment(new Vec3(0, 0, 0), new Vec3(40, 11, 23), 2, 2)));
+        out.add(Arguments.of("vertical segment", InnerSpaceIterable.segment(new Vec3(1, 1, 1), new Vec3(1, 30, 1), 3, 3)));
         out.add(Arguments.of("scaled and sheared",
-                InnerSpace.of(new Matrix4d().translation(3, 3, 3).rotateY(0.7).scale(2, 0.5, 3).m10(0.4), new Vector3d(-1, -1, -1), new Vector3d(1, 1, 1))));
+                InnerSpaceIterable.of(new Matrix4d().translation(3, 3, 3).rotateY(0.7).scale(2, 0.5, 3).m10(0.4), new Vector3d(-1, -1, -1), new Vector3d(1, 1, 1))));
         Random rng = new Random(0x9A57A);
         for (int i = 0; i < 12; i++) {
             Quaterniond q = new Quaterniond().rotationXYZ(rng.nextDouble() * 6.3, rng.nextDouble() * 6.3, rng.nextDouble() * 6.3);
             Vec3 c = new Vec3(rng.nextDouble() * 50 - 25, rng.nextDouble() * 50, rng.nextDouble() * 50 - 25);
             out.add(Arguments.of("random rotation " + i,
-                    InnerSpace.centered(c, q, 1 + rng.nextDouble() * 10, 1 + rng.nextDouble() * 10, 1 + rng.nextDouble() * 24)));
+                    InnerSpaceIterable.centered(c, q, 1 + rng.nextDouble() * 10, 1 + rng.nextDouble() * 10, 1 + rng.nextDouble() * 24)));
         }
         return out.stream();
     }
@@ -55,7 +55,7 @@ class InnerSpaceTest {
 
     @Test
     void unitCubeAtIntegerCornerPlacesExactlyOneBlock() {
-        InnerSpace space = InnerSpace.cornered(new Vec3(5, 70, -3), new Quaterniond(), 1, 1, 1);
+        InnerSpaceIterable space = InnerSpaceIterable.cornered(new Vec3(5, 70, -3), new Quaterniond(), 1, 1, 1);
         List<InnerSpacePos> placed = space.stream().toList();
 
         assertEquals(1, placed.size(), "a 1x1x1 space must place exactly one block");
@@ -73,7 +73,7 @@ class InnerSpaceTest {
     void rotatedUnitCubeCentredOnBlockPlacesExactlyOneBlock(String name, Quaterniond rotation) {
         // The block centre maps to inner (0, 0, 0), which lies inside [-0.5, 0.5) for any rotation; every other
         // block centre is at least one block away and so lands outside the half-unit box.
-        InnerSpace space = InnerSpace.centered(new Vec3(-12.5, 80.5, 33.5), rotation, 1, 1, 1);
+        InnerSpaceIterable space = InnerSpaceIterable.centered(new Vec3(-12.5, 80.5, 33.5), rotation, 1, 1, 1);
         List<InnerSpacePos> placed = space.stream().toList();
 
         assertEquals(1, placed.size(), "rotated 1x1x1 space must place exactly one block");
@@ -96,7 +96,7 @@ class InnerSpaceTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("spaces")
-    void worldPositionsAreUnique(String name, InnerSpace space) {
+    void worldPositionsAreUnique(String name, InnerSpaceIterable space) {
         List<InnerSpacePos> placed = space.stream().toList();
         Set<BlockPos> seen = new HashSet<>();
         for (InnerSpacePos p : placed) {
@@ -107,7 +107,7 @@ class InnerSpaceTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("spaces")
-    void innerPositionsAreUniqueAndWellSeparated(String name, InnerSpace space) {
+    void innerPositionsAreUniqueAndWellSeparated(String name, InnerSpaceIterable space) {
         List<InnerSpacePos> placed = space.stream().toList();
 
         // Distinct block centres are at least one block apart in world space. Pulling them into inner space
@@ -158,7 +158,7 @@ class InnerSpaceTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("spaces")
-    void matchesBruteForceAndReportsCorrectInnerCoordinates(String name, InnerSpace space) {
+    void matchesBruteForceAndReportsCorrectInnerCoordinates(String name, InnerSpaceIterable space) {
         Set<BlockPos> expected = new HashSet<>();
         Vector3d lo = space.worldBlockMin();
         Vector3d hi = space.worldBlockMax();

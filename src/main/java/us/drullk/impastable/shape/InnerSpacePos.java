@@ -3,7 +3,7 @@ package us.drullk.impastable.shape;
 import net.minecraft.core.BlockPos;
 
 /**
- * A world block together with where that block's centre lands inside an {@link InnerSpace}.
+ * A world block together with where that block's centre lands inside an {@link InnerSpaceIterable}.
  *
  * <p>{@code worldX/Y/Z} are ordinary block coordinates. {@code innerX/Y/Z} are the same point expressed in the
  * inner (shape) coordinate system of the space that produced this record, so a shape function can decide whether

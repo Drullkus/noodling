@@ -19,7 +19,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import org.joml.Quaterniond;
 import us.drullk.impastable.Impastable;
-import us.drullk.impastable.shape.InnerSpace;
+import us.drullk.impastable.shape.InnerSpaceIterable;
 import us.drullk.impastable.shape.InnerSpacePos;
 
 public class PastaCommands {
@@ -50,7 +50,7 @@ public class PastaCommands {
 
         Quaterniond rotation = new Quaterniond().rotationXYZ(random.triangle(0, 180f), random.triangle(0, 180f), random.triangle(0, 180f));
 
-        InnerSpace spaceIterator = InnerSpace.centered(new Vec3(centerPos), rotation, sizeXZ, sizeY, sizeXZ);
+        InnerSpaceIterable spaceIterator = InnerSpaceIterable.centered(new Vec3(centerPos), rotation, sizeXZ, sizeY, sizeXZ);
         for (InnerSpacePos innerSpacePos : spaceIterator) {
             float shapeRadius = Mth.sqrt(innerSpacePos.innerX() * innerSpacePos.innerX() + innerSpacePos.innerZ() * innerSpacePos.innerZ());
 

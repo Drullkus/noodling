@@ -43,7 +43,7 @@ import net.minecraft.world.phys.Vec3;
  *
  * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-06_17647dd8-8de1-4b0b-b68d-89a2d0ee63a8.md}.
  */
-public final class InnerSpace implements Iterable<InnerSpacePos> {
+public final class InnerSpaceIterable implements Iterable<InnerSpacePos> {
 
     /** Below this magnitude an inner-coordinate delta along the scan axis is treated as zero. */
     private static final double ZERO_EPSILON = 1e-9;
@@ -64,7 +64,7 @@ public final class InnerSpace implements Iterable<InnerSpacePos> {
     private final int outerA;
     private final int outerB;
 
-    private InnerSpace(Matrix4dc innerToWorld, Vector3dc innerMin, Vector3dc innerMax) {
+    private InnerSpaceIterable(Matrix4dc innerToWorld, Vector3dc innerMin, Vector3dc innerMax) {
         this.innerToWorld = new Matrix4d(innerToWorld);
         this.min[0] = innerMin.x(); this.min[1] = innerMin.y(); this.min[2] = innerMin.z();
         this.max[0] = innerMax.x(); this.max[1] = innerMax.y(); this.max[2] = innerMax.z();
@@ -121,26 +121,26 @@ public final class InnerSpace implements Iterable<InnerSpacePos> {
      * General form: any invertible affine {@code innerToWorld} (rotation, scale, shear, translation) and an inner
      * box {@code [innerMin, innerMax)}.
      */
-    public static InnerSpace of(Matrix4dc innerToWorld, Vector3dc innerMin, Vector3dc innerMax) {
-        return new InnerSpace(innerToWorld, innerMin, innerMax);
+    public static InnerSpaceIterable of(Matrix4dc innerToWorld, Vector3dc innerMin, Vector3dc innerMax) {
+        return new InnerSpaceIterable(innerToWorld, innerMin, innerMax);
     }
 
     /**
      * A cuboid of the given size (in blocks) whose inner origin sits at {@code worldCenter}; inner coordinates run
      * over {@code [-size/2, size/2)} on each axis, so shape functions can treat {@code (0,0,0)} as the middle.
      */
-    public static InnerSpace centered(Vec3 worldCenter, Quaterniondc rotation, double sizeX, double sizeY, double sizeZ) {
+    public static InnerSpaceIterable centered(Vec3 worldCenter, Quaterniondc rotation, double sizeX, double sizeY, double sizeZ) {
         Matrix4d m = new Matrix4d().translation(worldCenter.x, worldCenter.y, worldCenter.z).rotate(rotation);
-        return new InnerSpace(m, new Vector3d(-sizeX / 2, -sizeY / 2, -sizeZ / 2), new Vector3d(sizeX / 2, sizeY / 2, sizeZ / 2));
+        return new InnerSpaceIterable(m, new Vector3d(-sizeX / 2, -sizeY / 2, -sizeZ / 2), new Vector3d(sizeX / 2, sizeY / 2, sizeZ / 2));
     }
 
     /**
      * A cuboid of the given size (in blocks) whose inner origin sits at {@code worldOrigin} and whose inner
      * coordinates run over {@code [0, size)} on each axis.
      */
-    public static InnerSpace cornered(Vec3 worldOrigin, Quaterniondc rotation, double sizeX, double sizeY, double sizeZ) {
+    public static InnerSpaceIterable cornered(Vec3 worldOrigin, Quaterniondc rotation, double sizeX, double sizeY, double sizeZ) {
         Matrix4d m = new Matrix4d().translation(worldOrigin.x, worldOrigin.y, worldOrigin.z).rotate(rotation);
-        return new InnerSpace(m, new Vector3d(0, 0, 0), new Vector3d(sizeX, sizeY, sizeZ));
+        return new InnerSpaceIterable(m, new Vector3d(0, 0, 0), new Vector3d(sizeX, sizeY, sizeZ));
     }
 
     /**
@@ -149,7 +149,7 @@ public final class InnerSpace implements Iterable<InnerSpacePos> {
      * centred on that line. Inner Y is chosen to point as far "up" (world +Y) as the direction allows, so for a
      * mostly horizontal noodle inner Y is its vertical thickness.
      */
-    public static InnerSpace segment(Vec3 from, Vec3 to, double width, double height) {
+    public static InnerSpaceIterable segment(Vec3 from, Vec3 to, double width, double height) {
         Vector3d w = new Vector3d(to.x - from.x, to.y - from.y, to.z - from.z);
         double length = w.length();
         if (length < 1e-9) {
@@ -164,7 +164,7 @@ public final class InnerSpace implements Iterable<InnerSpacePos> {
                 v.x, v.y, v.z, 0,
                 w.x, w.y, w.z, 0,
                 from.x, from.y, from.z, 1);
-        return new InnerSpace(m, new Vector3d(-width / 2, -height / 2, 0), new Vector3d(width / 2, height / 2, length));
+        return new InnerSpaceIterable(m, new Vector3d(-width / 2, -height / 2, 0), new Vector3d(width / 2, height / 2, length));
     }
 
     // ---------------------------------------------------------------------------------------------------------

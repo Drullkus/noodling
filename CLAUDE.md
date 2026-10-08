@@ -1,6 +1,6 @@
 # Im-Pasta-ble
 
-NeoForge mod that rasterises pasta shapes into blocks. `InnerSpace` (package `us.drullk.impastable.shape`) is the core
+NeoForge mod that rasterises pasta shapes into blocks. `InnerSpaceIterable` (package `us.drullk.impastable.shape`) is the core
 primitive: an oriented cuboid with its own inner coordinate space, iterated as a 3D generalisation of Bresenham/DDA.
 
 ## Versions
