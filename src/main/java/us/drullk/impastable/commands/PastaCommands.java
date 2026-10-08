@@ -43,20 +43,19 @@ public class PastaCommands {
         RandomSource random = level.getRandom().forkPositional().at(centerPos);
 
         BlockState pasta = this.getRandomBlock(random).value().defaultBlockState();
-        BlockState negative = Blocks.AIR.defaultBlockState();
 
-        float sizeXZ = 12f;
-        float sizeY = 60f;
+        float diameter = Mth.lerp(random.nextFloat(), 12, 16);
+        float radius = diameter * 0.5f;
+        float height = Mth.lerp(random.nextFloat(), 50, 80);
 
         Quaterniond rotation = new Quaterniond().rotationXYZ(random.triangle(0, 180f), random.triangle(0, 180f), random.triangle(0, 180f));
 
-        InnerSpaceIterable spaceIterator = InnerSpaceIterable.centered(new Vec3(centerPos), rotation, sizeXZ, sizeY, sizeXZ);
+        InnerSpaceIterable spaceIterator = InnerSpaceIterable.centered(new Vec3(centerPos), rotation, diameter, height, diameter);
         for (InnerSpacePos innerSpacePos : spaceIterator) {
             float shapeRadius = Mth.sqrt(innerSpacePos.innerX() * innerSpacePos.innerX() + innerSpacePos.innerZ() * innerSpacePos.innerZ());
 
-            boolean solid = shapeRadius > 4f && shapeRadius < 6f && 0 > Math.abs(innerSpacePos.innerX() - innerSpacePos.innerY()) * 2 + sizeXZ - sizeY;
-
-            level.setBlock(innerSpacePos.toBlockPos(), solid ? pasta : negative, Block.UPDATE_ALL);
+            boolean solid = shapeRadius > radius * 0.667f && shapeRadius < radius && 0 > Math.abs(innerSpacePos.innerX() - innerSpacePos.innerY()) * 2 + diameter - height;
+            if (solid) level.setBlock(innerSpacePos.toBlockPos(), pasta, Block.UPDATE_ALL);
         }
 
         return 0;
