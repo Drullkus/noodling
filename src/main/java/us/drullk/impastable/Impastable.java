@@ -1,5 +1,6 @@
 package us.drullk.impastable;
 
+import net.minecraft.world.level.block.SoundType;
 import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
 
@@ -35,13 +36,13 @@ public class Impastable {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
-    public static final DeferredBlock<Block> TOMATO_PASTA_BLOCK = BLOCKS.registerSimpleBlock("tomato_pasta_block", p -> p.mapColor(MapColor.TERRACOTTA_RED));
-    public static final DeferredBlock<Block> CARROT_PASTA_BLOCK = BLOCKS.registerSimpleBlock("carrot_pasta_block", p -> p.mapColor(MapColor.TERRACOTTA_ORANGE));
-    public static final DeferredBlock<Block> WHEAT_PASTA_BLOCK = BLOCKS.registerSimpleBlock("wheat_pasta_block", p -> p.mapColor(MapColor.TERRACOTTA_YELLOW));
-    public static final DeferredBlock<Block> SPINACH_PASTA_BLOCK = BLOCKS.registerSimpleBlock("spinach_pasta_block", p -> p.mapColor(MapColor.TERRACOTTA_GREEN));
-    public static final DeferredBlock<Block> SPIRULINA_PASTA_BLOCK = BLOCKS.registerSimpleBlock("spirulina_pasta_block", p -> p.mapColor(MapColor.TERRACOTTA_BLUE));
-    public static final DeferredBlock<Block> BEETROOT_PASTA_BLOCK = BLOCKS.registerSimpleBlock("beetroot_pasta_block", p -> p.mapColor(MapColor.TERRACOTTA_MAGENTA));
-    public static final DeferredBlock<Block> SQUID_INK_PASTA_BLOCK = BLOCKS.registerSimpleBlock("squid_ink_pasta_block", p -> p.mapColor(MapColor.TERRACOTTA_BLACK));
+    public static final DeferredBlock<Block> TOMATO_PASTA_BLOCK = BLOCKS.registerSimpleBlock("tomato_pasta_block", p -> p.mapColor(MapColor.TERRACOTTA_RED).strength(0.8F).ignitedByLava());
+    public static final DeferredBlock<Block> CARROT_PASTA_BLOCK = BLOCKS.registerSimpleBlock("carrot_pasta_block", p -> p.mapColor(MapColor.TERRACOTTA_ORANGE).strength(0.8F).ignitedByLava());
+    public static final DeferredBlock<Block> WHEAT_PASTA_BLOCK = BLOCKS.registerSimpleBlock("wheat_pasta_block", p -> p.mapColor(MapColor.TERRACOTTA_YELLOW).strength(0.8F).ignitedByLava());
+    public static final DeferredBlock<Block> SPINACH_PASTA_BLOCK = BLOCKS.registerSimpleBlock("spinach_pasta_block", p -> p.mapColor(MapColor.TERRACOTTA_GREEN).strength(0.8F).ignitedByLava());
+    public static final DeferredBlock<Block> SPIRULINA_PASTA_BLOCK = BLOCKS.registerSimpleBlock("spirulina_pasta_block", p -> p.mapColor(MapColor.TERRACOTTA_BLUE).strength(0.8F).ignitedByLava());
+    public static final DeferredBlock<Block> BEETROOT_PASTA_BLOCK = BLOCKS.registerSimpleBlock("beetroot_pasta_block", p -> p.mapColor(MapColor.TERRACOTTA_MAGENTA).strength(0.8F).ignitedByLava());
+    public static final DeferredBlock<Block> SQUID_INK_PASTA_BLOCK = BLOCKS.registerSimpleBlock("squid_ink_pasta_block", p -> p.mapColor(MapColor.TERRACOTTA_BLACK).strength(0.8F).ignitedByLava());
 
     public static final List<DeferredBlock<Block>> PASTA_BLOCKS = List.of(TOMATO_PASTA_BLOCK, CARROT_PASTA_BLOCK, WHEAT_PASTA_BLOCK, SPINACH_PASTA_BLOCK, SPIRULINA_PASTA_BLOCK, BEETROOT_PASTA_BLOCK, SQUID_INK_PASTA_BLOCK);
 
