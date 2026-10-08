@@ -10,6 +10,13 @@ primitive: an oriented cuboid with its own inner coordinate space, iterated as a
 - Java 25 toolchain
 - JUnit 5.13.4 (`src/test`, run with `./gradlew test`; never packed into the mod jar)
 
+## Datagen
+
+- Providers live in the `datagen` source set (`src/datagen`), which is never packed into the mod jar; only the
+  `data` run uses it as its classpath.
+- `./gradlew runData` writes into `src/generated/resources` (included in the jar); commit the generated JSON.
+- `assets/impastable/lang/en_us.json` is generated, so add translations in `PastaLanguageProvider`, not by hand.
+
 ## AI attribution procedure
 
 The repository owner cites AI-generated work, so every session Claude works in must follow these steps.
