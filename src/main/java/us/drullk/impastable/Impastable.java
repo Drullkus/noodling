@@ -1,8 +1,5 @@
 package us.drullk.impastable;
 
-import net.minecraft.core.Holder;
-import net.minecraft.util.RandomSource;
-import net.minecraft.util.Util;
 import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
 
@@ -23,6 +20,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import us.drullk.impastable.commands.PastaCommands;
+import us.drullk.impastable.pasta.PastaPlacers;
 
 import java.util.List;
 
@@ -76,7 +74,9 @@ public class Impastable {
         ITEMS.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
 
-        NeoForge.EVENT_BUS.addListener(new PastaCommands()::registerCommands);
+        PastaPlacers pastaPlacers = new PastaPlacers();
+
+        NeoForge.EVENT_BUS.addListener(new PastaCommands(pastaPlacers)::registerCommands);
     }
 
 }
