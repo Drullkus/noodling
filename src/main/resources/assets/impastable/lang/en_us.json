@@ -1,13 +1,3 @@
 {
-  "itemGroup.impastable": "Example Mod Tab",
-  "block.impastable.example_block": "Example Block",
-  "item.impastable.example_item": "Example Item",
-
-  "impastable.configuration.title": "Example Mod Configs",
-  "impastable.configuration.section.impastable.common.toml": "Example Mod Configs",
-  "impastable.configuration.section.impastable.common.toml.title": "Example Mod Configs",
-  "impastable.configuration.items": "Item List",
-  "impastable.configuration.logDirtBlock": "Log Dirt Block",
-  "impastable.configuration.magicNumberIntroduction": "Magic Number Text",
-  "impastable.configuration.magicNumber": "Magic Number"
+  "itemGroup.impastable": "Im-Pasta-ble"
 }
