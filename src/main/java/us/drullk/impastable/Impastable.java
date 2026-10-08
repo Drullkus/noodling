@@ -1,5 +1,8 @@
 package us.drullk.impastable;
 
+import net.minecraft.core.Holder;
+import net.minecraft.util.RandomSource;
+import net.minecraft.util.Util;
 import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
 
