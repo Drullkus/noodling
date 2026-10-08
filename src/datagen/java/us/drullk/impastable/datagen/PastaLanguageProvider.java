@@ -25,7 +25,7 @@ public class PastaLanguageProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
-        add("itemGroup.impastable", "Im-Pasta-ble");
+        add("itemGroup." + Impastable.MODID, "Im-Pasta-ble");
 
         for (var pasta : Impastable.PASTA_BLOCKS) {
             Block block = pasta.get();

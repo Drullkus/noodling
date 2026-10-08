@@ -1,6 +1,5 @@
 package us.drullk.impastable;
 
-import net.minecraft.world.level.block.SoundType;
 import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
 
@@ -8,11 +7,9 @@ import com.mojang.logging.LogUtils;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
@@ -58,7 +55,7 @@ public class Impastable {
     //        .alwaysEdible().nutrition(1).saturationModifier(2f).build()));
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> PASTA_TAB = CREATIVE_MODE_TABS.register("pasta_tab", () -> CreativeModeTab.builder()
-            .title(Component.translatable("itemGroup.impastable"))
+            .title(Component.translatable("itemGroup." + Impastable.MODID))
             .withTabsBefore(CreativeModeTabs.COMBAT)
             .icon(WHEAT_PASTA_BLOCK::toStack)
             .displayItems((parameters, output) -> {
