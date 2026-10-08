@@ -1,12 +1,12 @@
 license="${mod_license}"
-issueTrackerURL="https://github.com/Drullkus/im-pasta-ble/issues"
+issueTrackerURL="https://github.com/Drullkus/noodling/issues"
 
 [[mods]]
 modId="${mod_id}"
 version="${mod_version}"
 displayName="${mod_name}"
 #updateJSONURL="https://change.me.example.invalid/updates.json"
-displayURL="https://github.com/Drullkus/im-pasta-ble"
+displayURL="https://github.com/Drullkus/noodling"
 #logoFile="examplemod.png"
 #credits=""
 authors="Drullkus"

@@ -1,6 +1,6 @@
-# Im-Pasta-ble
+# Noodling
 
-NeoForge mod that rasterises pasta shapes into blocks. `InnerSpaceIterable` (package `us.drullk.impastable.shape`) is the core
+NeoForge mod that rasterises pasta shapes into blocks. `InnerSpaceIterable` (package `us.drullk.noodling.shape`) is the core
 primitive: an oriented cuboid with its own inner coordinate space, iterated as a 3D generalisation of Bresenham/DDA.
 
 ## Versions
@@ -15,7 +15,7 @@ primitive: an oriented cuboid with its own inner coordinate space, iterated as a
 - Providers live in the `datagen` source set (`src/datagen`), which is never packed into the mod jar; only the
   `data` run uses it as its classpath.
 - `./gradlew runData` writes into `src/generated/resources` (included in the jar); commit the generated JSON.
-- `assets/impastable/lang/en_us.json` is generated, so add translations in `PastaLanguageProvider`, not by hand.
+- `assets/noodling/lang/en_us.json` is generated, so add translations in `PastaLanguageProvider`, not by hand.
 
 ## AI attribution procedure
 
