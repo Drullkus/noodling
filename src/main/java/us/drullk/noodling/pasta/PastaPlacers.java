@@ -2,6 +2,7 @@ package us.drullk.noodling.pasta;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Ease;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
@@ -28,7 +29,8 @@ public class PastaPlacers {
         for (InnerSpacePos innerSpacePos : spaceIterator) {
             float sampledRadius = Mth.length(innerSpacePos.innerX(), innerSpacePos.innerZ());
 
-            boolean solid = sampledRadius > radius * 0.667f && sampledRadius < radius && 0 > Math.abs(innerSpacePos.innerX() - innerSpacePos.innerY()) * 2 + diameter - height;
+            boolean solid = sampledRadius > radius * 0.667f && sampledRadius < radius // Filter positions for inside and outside the hollow cylinder
+                    && 0 > Math.abs(innerSpacePos.innerX() - innerSpacePos.innerY()) * 2 + diameter - height; // Angled cutoffs for the ends
             if (solid) level.setBlock(innerSpacePos.toBlockPos(), pasta, Block.UPDATE_ALL);
         }
     }
@@ -131,6 +133,26 @@ public class PastaPlacers {
                     && fin >= 0 && fin < fins; // Avoid extra fins/stray voxels via rounding error.
 
             boolean solid = sampledRadius > radiusThreshold - coreThickness && sampledRadius < radiusThreshold + (isYWithinFin ? finHeight : 0f);
+            if (solid) level.setBlock(innerSpacePos.toBlockPos(), pasta, Block.UPDATE_ALL);
+        }
+    }
+
+    public void placeMacaroni(ServerLevel level, BlockPos centerPos) {
+        RandomSource random = level.getRandom().forkPositional().at(centerPos);
+
+        BlockState pasta = this.helper.getRandomPastaBlock(random);
+
+        float diameter = Mth.lerp(random.nextFloat(), 8, 10);
+        float radius = diameter * 0.5f;
+        float height = random.triangle(35, 5);
+        float thickness = 2.5f;
+        float curve = Mth.lerp(Ease.inOutQuad(random.nextFloat()), height * 0.75f, height * 2f);
+
+        InnerSpaceIterable spaceIterator = InnerSpaceIterable.centered(new Vec3(centerPos), this.helper.nextRotation(random), diameter, height, diameter);
+        for (InnerSpacePos innerSpacePos : spaceIterator.bentByRadius(curve)) {
+            float sampledRadius = Mth.length(innerSpacePos.innerX(), innerSpacePos.innerZ());
+
+            boolean solid = sampledRadius > radius - thickness && sampledRadius < radius;
             if (solid) level.setBlock(innerSpacePos.toBlockPos(), pasta, Block.UPDATE_ALL);
         }
     }
