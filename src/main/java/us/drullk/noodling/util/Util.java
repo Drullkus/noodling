@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.block.entity.SignTextSlot;
+import org.joml.Quaterniond;
 import us.drullk.noodling.Noodling;
 
 import java.util.List;
@@ -33,5 +34,9 @@ public class Util {
 
     public static Holder<Block> getRandomBlock(RandomSource random) {
         return net.minecraft.util.Util.getRandom(Noodling.PASTA_BLOCKS, random);
+    }
+
+    public static Quaterniond nextRotation(RandomSource random) {
+        return new Quaterniond().rotationXYZ(random.triangle(0, 180f), random.triangle(0, 180f), random.triangle(0, 180f));
     }
 }

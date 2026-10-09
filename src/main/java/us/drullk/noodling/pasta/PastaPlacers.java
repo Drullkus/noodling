@@ -7,7 +7,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Quaterniond;
 import us.drullk.noodling.shape.InnerSpaceIterable;
 import us.drullk.noodling.shape.InnerSpacePos;
 import us.drullk.noodling.util.Util;
@@ -23,9 +22,7 @@ public class PastaPlacers {
         float radius = diameter * 0.5f;
         float height = Mth.lerp(random.nextFloat(), 50, 80);
 
-        Quaterniond rotation = new Quaterniond().rotationXYZ(random.triangle(0, 180f), random.triangle(0, 180f), random.triangle(0, 180f));
-
-        InnerSpaceIterable spaceIterator = InnerSpaceIterable.centered(new Vec3(centerPos), rotation, diameter, height, diameter);
+        InnerSpaceIterable spaceIterator = InnerSpaceIterable.centered(new Vec3(centerPos), Util.nextRotation(random), diameter, height, diameter);
         for (InnerSpacePos innerSpacePos : spaceIterator) {
             float shapeRadius = Mth.length(innerSpacePos.innerX(), innerSpacePos.innerZ());
 
@@ -45,9 +42,7 @@ public class PastaPlacers {
         float thickness = Mth.lerp(Mth.square(random.nextFloat()), 2f, diameter * 0.25f);
         float twist = 1f / Mth.lerp(random.nextFloat(), 3f, 8f);
 
-        Quaterniond rotation = new Quaterniond().rotationXYZ(random.triangle(0, 180f), random.triangle(0, 180f), random.triangle(0, 180f));
-
-        InnerSpaceIterable spaceIterator = InnerSpaceIterable.centered(new Vec3(centerPos), rotation, diameter, height, diameter);
+        InnerSpaceIterable spaceIterator = InnerSpaceIterable.centered(new Vec3(centerPos), Util.nextRotation(random), diameter, height, diameter);
         for (InnerSpacePos innerSpacePos : spaceIterator) {
             float shapeRadius = Mth.length(innerSpacePos.innerX(), innerSpacePos.innerZ());
 
@@ -67,9 +62,7 @@ public class PastaPlacers {
         float halfHeight = height * 0.65f; // Slightly over half, or else orphaned voxels (blocks) will place
         float taperFactor = Mth.lerp(random.nextFloat(), 2, 3);
 
-        Quaterniond rotation = new Quaterniond().rotationXYZ(random.triangle(0, 180f), random.triangle(0, 180f), random.triangle(0, 180f));
-
-        InnerSpaceIterable spaceIterator = InnerSpaceIterable.centered(new Vec3(centerPos), rotation, diameter, height, diameter);
+        InnerSpaceIterable spaceIterator = InnerSpaceIterable.centered(new Vec3(centerPos), Util.nextRotation(random), diameter, height, diameter);
         for (InnerSpacePos innerSpacePos : spaceIterator) {
             double angle = Mth.atan2(innerSpacePos.innerZ(), innerSpacePos.innerX()) + Mth.PI;
             float shapeRadius = Mth.length(innerSpacePos.innerX(), innerSpacePos.innerZ());
