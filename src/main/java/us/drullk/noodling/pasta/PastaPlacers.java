@@ -18,7 +18,7 @@ public class PastaPlacers {
     public void placePenne(ServerLevel level, BlockPos centerPos) {
         RandomSource random = level.getRandom().forkPositional().at(centerPos);
 
-        BlockState pasta = this.helper.getRandomBlock(random).value().defaultBlockState();
+        BlockState pasta = this.helper.getRandomPastaBlock(random);
 
         float diameter = Mth.lerp(random.nextFloat(), 12, 16);
         float radius = diameter * 0.5f;
@@ -36,7 +36,7 @@ public class PastaPlacers {
     public void placeSpiral(ServerLevel level, BlockPos centerPos) {
         RandomSource random = level.getRandom().forkPositional().at(centerPos);
 
-        BlockState pasta = this.helper.getRandomBlock(random).value().defaultBlockState();
+        BlockState pasta = this.helper.getRandomPastaBlock(random);
 
         float diameter = Mth.lerp(random.nextFloat(), 12, 16);
         float radius = diameter * 0.5f;
@@ -56,7 +56,7 @@ public class PastaPlacers {
     public void placeShell(ServerLevel level, BlockPos centerPos) {
         RandomSource random = level.getRandom().forkPositional().at(centerPos);
 
-        BlockState pasta = this.helper.getRandomBlock(random).value().defaultBlockState();
+        BlockState pasta = this.helper.getRandomPastaBlock(random);
 
         float diameter = Mth.lerp(random.nextFloat(), 16, 20);
         float radius = diameter * 0.5f;
