@@ -346,6 +346,25 @@ class InnerSpaceTest {
         assertEquals(blockSet(space), blockSet(space.bent(2 * Math.PI / height)), "float and double full turns visit the same blocks");
     }
 
+    @Test
+    void turnAndRadiusHelpersDeriveTheCurvature() {
+        InnerSpaceIterable straight = InnerSpaceIterable.centered(new Vec3(4.2, 9.1, -3.3), new Quaterniond().rotationXYZ(0.4, 1.1, 2.3), 12, 60, 12);
+
+        InnerSpaceIterable halfTurn = straight.bentByTurn(Math.PI);
+        assertEquals(Math.PI / 60, halfTurn.curvature(), 1e-15, "turn / height");
+        assertEquals(blockSet(straight.bent(Math.PI / 60)), blockSet(halfTurn));
+
+        InnerSpaceIterable radius20 = straight.bentByRadius(-20);
+        assertEquals(-0.05, radius20.curvature(), 1e-15, "1 / radius, keeping the sign");
+        assertEquals(blockSet(straight.bent(-0.05)), blockSet(radius20));
+
+        assertEquals(2 * Math.PI, straight.bentByTurn(2 * Math.PI).curvature() * 60, 1e-12, "a full turn closes the ring");
+        assertTrue(straight.bentByTurn(0) == straight, "no turn is the straight space");
+        assertThrows(IllegalArgumentException.class, () -> straight.bentByRadius(0));
+        assertThrows(IllegalArgumentException.class, () -> straight.bentByRadius(5), "radius 5 is inside the half width 6");
+        assertThrows(IllegalArgumentException.class, () -> straight.bentByTurn(7), "7 radians is more than a full turn");
+    }
+
     private static Set<BlockPos> blockSet(InnerSpaceIterable space) {
         Set<BlockPos> out = new HashSet<>();
         for (InnerSpacePos p : space) {

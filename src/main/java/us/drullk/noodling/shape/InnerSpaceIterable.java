@@ -43,7 +43,8 @@ import net.minecraft.world.phys.Vec3;
  * <h2>Bending</h2>
  * {@link #bent(double)} bends the inner Y axis into a circular arc with the given signed curvature (the inverse
  * of the bend radius, in blocks⁻¹). A positive curvature turns the +Y end of the axis toward +X, a negative one
- * toward -X, and the total turn is {@code (max.y - min.y) * curvature} radians. The inner coordinates a bent
+ * toward -X, and the total turn is {@code (max.y - min.y) * curvature} radians. {@link #bentByTurn(double)} and
+ * {@link #bentByRadius(double)} take that total turn or that bend radius instead and derive the curvature. The inner coordinates a bent
  * space reports are still the <em>straight</em> ones: {@code innerY} is the arc length along the centre line and
  * {@code (innerX, innerZ)} is the undistorted cross-section, so a shape function written for a straight space
  * produces the same shape, bent. The bend radius must be larger than the distance from the inner Y axis to the
@@ -206,6 +207,31 @@ public final class InnerSpaceIterable implements Iterable<InnerSpacePos> {
             return bend == null ? this : new InnerSpaceIterable(innerToWorld, innerMin(), innerMax(), null);
         }
         return new InnerSpaceIterable(innerToWorld, innerMin(), innerMax(), new Bend(curvature, min, max));
+    }
+
+    /**
+     * {@link #bent(double)} expressed as the total angle the inner Y axis turns through over the length of the inner
+     * box: the curvature is {@code turn / (max.y - min.y)}. A half turn ({@code PI}) makes an elbow and a full turn
+     * ({@code 2 * PI}) closes the box into a ring.
+     *
+     * @param turn signed total turn in radians; positive turns toward +X
+     */
+    public InnerSpaceIterable bentByTurn(double turn) {
+        return bent(turn / (max[1] - min[1]));
+    }
+
+    /**
+     * {@link #bent(double)} expressed as the bend radius of the inner Y axis in blocks: the curvature is
+     * {@code 1 / radius}. The radius must be larger than the distance from the inner Y axis to the box face it
+     * bends toward, and {@code (max.y - min.y) / radius} must not exceed a full turn.
+     *
+     * @param radius signed bend radius in blocks; positive bends toward +X, and {@code 0} is rejected
+     */
+    public InnerSpaceIterable bentByRadius(double radius) {
+        if (radius == 0) {
+            throw new IllegalArgumentException("bend radius must be non-zero");
+        }
+        return bent(1 / radius);
     }
 
     // ---------------------------------------------------------------------------------------------------------
