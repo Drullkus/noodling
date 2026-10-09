@@ -13,16 +13,18 @@ import us.drullk.noodling.util.Util;
 
 public class PastaPlacers {
 
+    private Util helper = new Util();
+
     public void placePenne(ServerLevel level, BlockPos centerPos) {
         RandomSource random = level.getRandom().forkPositional().at(centerPos);
 
-        BlockState pasta = Util.getRandomBlock(random).value().defaultBlockState();
+        BlockState pasta = this.helper.getRandomBlock(random).value().defaultBlockState();
 
         float diameter = Mth.lerp(random.nextFloat(), 12, 16);
         float radius = diameter * 0.5f;
         float height = Mth.lerp(random.nextFloat(), 50, 80);
 
-        InnerSpaceIterable spaceIterator = InnerSpaceIterable.centered(new Vec3(centerPos), Util.nextRotation(random), diameter, height, diameter);
+        InnerSpaceIterable spaceIterator = InnerSpaceIterable.centered(new Vec3(centerPos), this.helper.nextRotation(random), diameter, height, diameter);
         for (InnerSpacePos innerSpacePos : spaceIterator) {
             float shapeRadius = Mth.length(innerSpacePos.innerX(), innerSpacePos.innerZ());
 
@@ -34,7 +36,7 @@ public class PastaPlacers {
     public void placeSpiral(ServerLevel level, BlockPos centerPos) {
         RandomSource random = level.getRandom().forkPositional().at(centerPos);
 
-        BlockState pasta = Util.getRandomBlock(random).value().defaultBlockState();
+        BlockState pasta = this.helper.getRandomBlock(random).value().defaultBlockState();
 
         float diameter = Mth.lerp(random.nextFloat(), 12, 16);
         float radius = diameter * 0.5f;
@@ -42,7 +44,7 @@ public class PastaPlacers {
         float thickness = Mth.lerp(Mth.square(random.nextFloat()), 2f, diameter * 0.25f);
         float twist = 1f / Mth.lerp(random.nextFloat(), 3f, 8f);
 
-        InnerSpaceIterable spaceIterator = InnerSpaceIterable.centered(new Vec3(centerPos), Util.nextRotation(random), diameter, height, diameter);
+        InnerSpaceIterable spaceIterator = InnerSpaceIterable.centered(new Vec3(centerPos), this.helper.nextRotation(random), diameter, height, diameter);
         for (InnerSpacePos innerSpacePos : spaceIterator) {
             float shapeRadius = Mth.length(innerSpacePos.innerX(), innerSpacePos.innerZ());
 
@@ -54,7 +56,7 @@ public class PastaPlacers {
     public void placeShell(ServerLevel level, BlockPos centerPos) {
         RandomSource random = level.getRandom().forkPositional().at(centerPos);
 
-        BlockState pasta = Util.getRandomBlock(random).value().defaultBlockState();
+        BlockState pasta = this.helper.getRandomBlock(random).value().defaultBlockState();
 
         float diameter = Mth.lerp(random.nextFloat(), 16, 20);
         float radius = diameter * 0.5f;
@@ -62,7 +64,7 @@ public class PastaPlacers {
         float halfHeight = height * 0.65f; // Slightly over half, or else orphaned voxels (blocks) will place
         float taperFactor = Mth.lerp(random.nextFloat(), 2, 3);
 
-        InnerSpaceIterable spaceIterator = InnerSpaceIterable.centered(new Vec3(centerPos), Util.nextRotation(random), diameter, height, diameter);
+        InnerSpaceIterable spaceIterator = InnerSpaceIterable.centered(new Vec3(centerPos), this.helper.nextRotation(random), diameter, height, diameter);
         for (InnerSpacePos innerSpacePos : spaceIterator) {
             double angle = Mth.atan2(innerSpacePos.innerZ(), innerSpacePos.innerX()) + Mth.PI;
             float shapeRadius = Mth.length(innerSpacePos.innerX(), innerSpacePos.innerZ());
