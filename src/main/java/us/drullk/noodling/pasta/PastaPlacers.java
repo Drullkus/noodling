@@ -97,12 +97,12 @@ public class PastaPlacers {
         float finHeight = Mth.lerp(random.nextFloat(), 4, 6); // How tall the fins are from the base radius, additively.
 
         // Pasta Extruders don't always push mass evenly, so straight fins can distort into frills.
-        float finFrillingFreq = Mth.lerp(random.nextFloat(), 2, 10);
-        // Flowrate in extrusion may change, so one end may have greater frilling than the other.
-        float finFrillingAmpHead = Mth.lerp(random.nextFloat(), 0, 1.5f), finFrillingAmpTail = Mth.lerp(random.nextFloat(), 0, 1.5f);
+        // Flowrate in extrusion may change, so one end may have greater frilling than the other. Varies both by frequency and amplitude!
+        float finFrillingFreqHead = Mth.lerp(Mth.square(random.nextFloat()), 6, 2), finFrillingFreqTail = Mth.lerp(Mth.square(random.nextFloat()), 6, 2);
+        float finFrillingAmpHead = Mth.lerp(Mth.square(random.nextFloat()), 1.5f, 0), finFrillingAmpTail = Mth.lerp(Mth.square(random.nextFloat()), 1.5f, 0);
 
         // Radiatori shouldn't close as a circle, but more often than not comes close. Pow2 biases for nearing a complete circle.
-        float cutoffRadian = Mth.lerp(Mth.square(random.nextFloat()), 0.9f, 0.6f) * Mth.TWO_PI;
+        float cutoffRadian = Mth.lerp(Mth.square(random.nextFloat()), 0.9f, 2f/3f) * Mth.TWO_PI;
 
         float diameterMax = Math.max(diameterHead, diameterTail) + finHeight * 2f;
 
@@ -121,7 +121,7 @@ public class PastaPlacers {
             double radiusThreshold = Mth.lerp(arcLerpFactor, radiusHead, radiusTail);
 
             // Y-offset to produce the frilling in the fin checks.
-            double frillingYOffset = Mth.cos(sampledRadian * finFrillingFreq) // The wave for the frills.
+            double frillingYOffset = Mth.cos(sampledRadian * Mth.lerp(arcLerpFactor, finFrillingFreqHead, finFrillingFreqTail)) // The wave for the frills.
                     * Mth.lerp(arcLerpFactor, finFrillingAmpHead, finFrillingAmpTail) // Amplitude of frilling, in respect to arc progression.
                     * Mth.inverseLerp(sampledRadius, radiusThreshold, radiusThreshold + finHeight); // Flatten frills towards the core, keeping full frilling at the extremity.
 
