@@ -26,9 +26,9 @@ public class PastaPlacers {
 
         InnerSpaceIterable spaceIterator = InnerSpaceIterable.centered(new Vec3(centerPos), this.helper.nextRotation(random), diameter, height, diameter);
         for (InnerSpacePos innerSpacePos : spaceIterator) {
-            float shapeRadius = Mth.length(innerSpacePos.innerX(), innerSpacePos.innerZ());
+            float sampledRadius = Mth.length(innerSpacePos.innerX(), innerSpacePos.innerZ());
 
-            boolean solid = shapeRadius > radius * 0.667f && shapeRadius < radius && 0 > Math.abs(innerSpacePos.innerX() - innerSpacePos.innerY()) * 2 + diameter - height;
+            boolean solid = sampledRadius > radius * 0.667f && sampledRadius < radius && 0 > Math.abs(innerSpacePos.innerX() - innerSpacePos.innerY()) * 2 + diameter - height;
             if (solid) level.setBlock(innerSpacePos.toBlockPos(), pasta, Block.UPDATE_ALL);
         }
     }
@@ -46,9 +46,9 @@ public class PastaPlacers {
 
         InnerSpaceIterable spaceIterator = InnerSpaceIterable.centered(new Vec3(centerPos), this.helper.nextRotation(random), diameter, height, diameter);
         for (InnerSpacePos innerSpacePos : spaceIterator) {
-            float shapeRadius = Mth.length(innerSpacePos.innerX(), innerSpacePos.innerZ());
+            float sampledRadius = Mth.length(innerSpacePos.innerX(), innerSpacePos.innerZ());
 
-            boolean solid = shapeRadius < radius && thickness > Mth.abs(Mth.cos(innerSpacePos.innerY() * twist) * innerSpacePos.innerZ() - Mth.sin(innerSpacePos.innerY() * twist) * innerSpacePos.innerX());
+            boolean solid = sampledRadius < radius && thickness > Mth.abs(Mth.cos(innerSpacePos.innerY() * twist) * innerSpacePos.innerZ() - Mth.sin(innerSpacePos.innerY() * twist) * innerSpacePos.innerX());
             if (solid) level.setBlock(innerSpacePos.toBlockPos(), pasta, Block.UPDATE_ALL);
         }
     }
@@ -58,7 +58,7 @@ public class PastaPlacers {
 
         BlockState pasta = this.helper.getRandomPastaBlock(random);
 
-        float diameter = Mth.lerp(random.nextFloat(), 16, 20);
+        float diameter = Mth.lerp(random.nextFloat(), 12, 16);
         float radius = diameter * 0.5f;
         float height = diameter * random.triangle(1.25f, 0.2f);
         float halfHeight = height * 0.65f; // Slightly over half, or else orphaned voxels (blocks) will place
@@ -67,11 +67,11 @@ public class PastaPlacers {
         InnerSpaceIterable spaceIterator = InnerSpaceIterable.centered(new Vec3(centerPos), this.helper.nextRotation(random), diameter, height, diameter);
         for (InnerSpacePos innerSpacePos : spaceIterator) {
             double angle = Mth.atan2(innerSpacePos.innerZ(), innerSpacePos.innerX()) + Mth.PI;
-            float shapeRadius = Mth.length(innerSpacePos.innerX(), innerSpacePos.innerZ());
+            float sampledRadius = Mth.length(innerSpacePos.innerX(), innerSpacePos.innerZ());
             double taper = Math.pow(1 - Mth.square(innerSpacePos.innerY() / halfHeight), taperFactor);
 
-            double angleThreshold = Math.sqrt(angle) / Mth.PI * radius * taper;
-            boolean solid = shapeRadius < angleThreshold && shapeRadius > angleThreshold - 2.5f;
+            double radiusThreshold = Math.sqrt(angle / Mth.TWO_PI) * radius * taper;
+            boolean solid = sampledRadius < radiusThreshold && sampledRadius > radiusThreshold - 2.5f;
             if (solid) level.setBlock(innerSpacePos.toBlockPos(), pasta, Block.UPDATE_ALL);
         }
     }
