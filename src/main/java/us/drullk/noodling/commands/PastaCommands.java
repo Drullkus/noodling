@@ -23,6 +23,7 @@ public class PastaCommands {
 
         root.then(Commands.literal("penne").then(Commands.argument("pos", BlockPosArgument.blockPos()).executes(this::penne)));
         root.then(Commands.literal("spiral").then(Commands.argument("pos", BlockPosArgument.blockPos()).executes(this::spiral)));
+        root.then(Commands.literal("shell").then(Commands.argument("pos", BlockPosArgument.blockPos()).executes(this::shell)));
 
         event.getDispatcher().register(root);
     }
@@ -35,6 +36,12 @@ public class PastaCommands {
 
     public int spiral(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         this.pastaPlacers.placeSpiral(ctx.getSource().getLevel(), BlockPosArgument.getLoadedBlockPos(ctx, "pos"));
+
+        return 0;
+    }
+
+    public int shell(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        this.pastaPlacers.placeShell(ctx.getSource().getLevel(), BlockPosArgument.getLoadedBlockPos(ctx, "pos"));
 
         return 0;
     }
