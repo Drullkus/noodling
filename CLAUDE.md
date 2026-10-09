@@ -10,6 +10,13 @@ primitive: an oriented cuboid with its own inner coordinate space, iterated as a
 - Java 25 toolchain
 - JUnit 5.13.4 (`src/test`, run with `./gradlew test`; never packed into the mod jar)
 
+## Codebase conventions
+
+- Documentation must be written in simple American English, following principles of ASD-STE100:
+  - Unambiguous and instructive language.
+  - Present tense and active tone.
+- Every package must be annotated with `@org.jspecify.annotations.NullMarked`.
+
 ## Datagen
 
 - Providers live in the `datagen` source set (`src/datagen`), which is never packed into the mod jar; only the
