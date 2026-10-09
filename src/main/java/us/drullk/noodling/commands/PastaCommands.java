@@ -26,6 +26,7 @@ public class PastaCommands {
         root.then(Commands.literal("shell").then(Commands.argument("pos", BlockPosArgument.blockPos()).executes(this::shell)));
         root.then(Commands.literal("radiatori").then(Commands.argument("pos", BlockPosArgument.blockPos()).executes(this::radiatori)));
         root.then(Commands.literal("macaroni").then(Commands.argument("pos", BlockPosArgument.blockPos()).executes(this::macaroni)));
+        root.then(Commands.literal("pipette").then(Commands.argument("pos", BlockPosArgument.blockPos()).executes(this::pipette)));
 
         event.getDispatcher().register(root);
     }
@@ -56,6 +57,12 @@ public class PastaCommands {
 
     public int macaroni(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         this.pastaPlacers.placeMacaroni(ctx.getSource().getLevel(), BlockPosArgument.getLoadedBlockPos(ctx, "pos"));
+
+        return 0;
+    }
+
+    public int pipette(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        this.pastaPlacers.placePipette(ctx.getSource().getLevel(), BlockPosArgument.getLoadedBlockPos(ctx, "pos"));
 
         return 0;
     }
