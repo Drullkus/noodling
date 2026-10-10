@@ -9,36 +9,59 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Quaterniond;
 import us.drullk.noodling.shape.InnerSpaceIterable;
 import us.drullk.noodling.shape.InnerSpacePos;
+import org.jspecify.annotations.Nullable;
+import us.drullk.noodling.noodler.PastaParam;
+import us.drullk.noodling.noodler.PastaShape;
 import us.drullk.noodling.util.Util;
 
 public class RadiatoriPlacer {
 
     private final Util helper;
+    private @Nullable PastaShape shape;
 
     public RadiatoriPlacer(Util helper) {
         this.helper = helper;
     }
 
+    /**
+     * Places a radiatori with every parameter rolled from {@code random}, through {@link #shape()}.
+     *
+     * <p>The random calls happen in the same order as before, so this method still gives the same shape for the same
+     * random source; the Noodler resolves the same parameters from its own seeds instead.
+     *
+     * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
+     */
     public void placeRandomRadiatori(ServerLevel level, Vec3 center, RandomSource random) {
-        // Each radiatori piece curls differently, and not as aggressively to become a pasta conch (shell).
-        float diameterHead = Mth.lerp(random.nextFloat(), 6, 12), diameterTail = Mth.lerp(random.nextFloat(), 6, 12);
-        float coreThickness = 2.5f;
+        this.shape().placeRandom(level, center, random);
+    }
 
-        // Radiatori gets its name from looking like radiators!
-        int fins = random.nextIntBetweenInclusive(3, 6); // Fins for capturing sauce
-        float finWidth = 3f; // How thick each fin should be.
-        float finSpacing = 3.5f; // Size of gap between fins.
-        float finHeight = Mth.lerp(random.nextFloat(), 4, 6); // How tall the fins are from the base radius, additively.
-
-        // Pasta Extruders don't always push mass evenly, so straight fins can distort into frills.
-        // Flowrate in extrusion may change, so one end may have greater frilling than the other. Varies both by frequency and amplitude!
-        float finFrillingFreqHead = Mth.lerp(Mth.square(random.nextFloat()), 6, 2), finFrillingFreqTail = Mth.lerp(Mth.square(random.nextFloat()), 6, 2);
-        float finFrillingAmpHead = Mth.lerp(Mth.square(random.nextFloat()), 1.5f, 0), finFrillingAmpTail = Mth.lerp(Mth.square(random.nextFloat()), 1.5f, 0);
-
-        // Radiatori shouldn't close as a circle, but more often than not comes close. Pow2 biases for nearing a complete circle.
-        float cutoffRadian = Mth.lerp(Mth.square(random.nextFloat()), 0.9f, 2f/3f) * Mth.TWO_PI;
-
-        this.placeRadiatori(level, center, this.helper.nextRotation(random), this.helper.getRandomPastaBlock(random), diameterHead, diameterTail, finHeight, finWidth, finSpacing, fins, cutoffRadian, finFrillingFreqHead, finFrillingFreqTail, finFrillingAmpHead, finFrillingAmpTail, coreThickness);
+    /**
+     * Describes radiatori for the Noodler, keeping the roll order of the hand-written version: diameters, fin count, fin height, frilling, cutoff.
+     *
+     * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
+     */
+    public PastaShape shape() {
+        if (this.shape == null) {
+            this.shape = PastaShape.builder("radiatori")
+                    .param(PastaParam.floatSlider("diameter_head", (random, siblings) -> Mth.lerp(random.nextFloat(), 6, 12), siblings -> new PastaParam.Bounds(6, 12)))
+                    .param(PastaParam.floatSlider("diameter_tail", (random, siblings) -> Mth.lerp(random.nextFloat(), 6, 12), siblings -> new PastaParam.Bounds(6, 12)))
+                    .param(PastaParam.floatField("core_thickness", siblings -> 2.5f))
+                    .param(PastaParam.intSlider("fins", (random, siblings) -> random.nextIntBetweenInclusive(3, 6), siblings -> new PastaParam.Bounds(3, 6)))
+                    .param(PastaParam.floatField("fin_width", siblings -> 3f))
+                    .param(PastaParam.floatField("fin_spacing", siblings -> 3.5f))
+                    .param(PastaParam.floatSlider("fin_height", (random, siblings) -> Mth.lerp(random.nextFloat(), 4, 6), siblings -> new PastaParam.Bounds(4, 6)))
+                    .param(PastaParam.floatSlider("fin_frilling_freq_head", (random, siblings) -> Mth.lerp(Mth.square(random.nextFloat()), 6, 2), siblings -> new PastaParam.Bounds(2, 6)))
+                    .param(PastaParam.floatSlider("fin_frilling_freq_tail", (random, siblings) -> Mth.lerp(Mth.square(random.nextFloat()), 6, 2), siblings -> new PastaParam.Bounds(2, 6)))
+                    .param(PastaParam.floatSlider("fin_frilling_amp_head", (random, siblings) -> Mth.lerp(Mth.square(random.nextFloat()), 1.5f, 0), siblings -> new PastaParam.Bounds(0, 1.5f)))
+                    .param(PastaParam.floatSlider("fin_frilling_amp_tail", (random, siblings) -> Mth.lerp(Mth.square(random.nextFloat()), 1.5f, 0), siblings -> new PastaParam.Bounds(0, 1.5f)))
+                    .param(PastaParam.floatSlider("cutoff_radian", (random, siblings) -> Mth.lerp(Mth.square(random.nextFloat()), 0.9f, 2f/3f) * Mth.TWO_PI, siblings -> new PastaParam.Bounds(2f/3f * Mth.TWO_PI, 0.9f * Mth.TWO_PI)))
+                    .param(PastaParam.rotation(this.helper))
+                    .param(PastaParam.pasta(this.helper))
+                    .place((level, center, params) -> this.placeRadiatori(level, center, params.rotation(), params.pasta(),
+                            params.f("diameter_head"), params.f("diameter_tail"), params.f("fin_height"), params.f("fin_width"), params.f("fin_spacing"), params.i("fins"), params.f("cutoff_radian"),
+                            params.f("fin_frilling_freq_head"), params.f("fin_frilling_freq_tail"), params.f("fin_frilling_amp_head"), params.f("fin_frilling_amp_tail"), params.f("core_thickness")));
+        }
+        return this.shape;
     }
 
     public void placeRadiatori(ServerLevel level, Vec3 center, Quaterniond rotation, BlockState pasta, float diameterHead, float diameterTail, float finHeight, float finWidth, float finSpacing, int fins, float cutoffRadian, float finFrillingFreqHead, float finFrillingFreqTail, float finFrillingAmpHead, float finFrillingAmpTail, float coreThickness) {

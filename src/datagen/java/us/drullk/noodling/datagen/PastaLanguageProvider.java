@@ -5,6 +5,11 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 import us.drullk.noodling.Noodling;
+import us.drullk.noodling.noodler.PastaParam;
+import us.drullk.noodling.noodler.PastaShape;
+import us.drullk.noodling.noodler.PastaShapes;
+
+import java.util.LinkedHashSet;
 
 import java.util.Locale;
 
@@ -15,7 +20,11 @@ import java.util.Locale;
  * {@code squid_ink_pasta_block} becomes "Squid Ink Pasta Block". The block items share the block's description id
  * (see {@code Item.Properties#useBlockDescriptionPrefix}), so one entry covers both.
  *
+ * <p>The Noodler's item name, its GUI labels, the pasta shape names and the shape parameter names are listed here
+ * too; parameter names are derived from the parameter keys the same way as block names.
+ *
  * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-08_b2d8f02b-624c-4f11-b4f8-507057a1af26.md}.
+ * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
  */
 public class PastaLanguageProvider extends LanguageProvider {
 
@@ -30,6 +39,28 @@ public class PastaLanguageProvider extends LanguageProvider {
         for (var pasta : Noodling.PASTA_BLOCKS) {
             Block block = pasta.get();
             add(block, titleCase(BuiltInRegistries.BLOCK.getKey(block).getPath()));
+        }
+
+        add(Noodling.NOODLER.get(), "Noodler");
+        add("noodling.gui.title", "Noodler");
+        add("noodling.gui.seed", "Seed");
+        add("noodling.gui.lock_seed", "Lock seed");
+        add("noodling.gui.pasta", "Pasta");
+        add("noodling.gui.param_seed", "Seed");
+        add("noodling.gui.param_lock", "Lock");
+        add("noodling.gui.param_value", "Value");
+        add("noodling.gui.axis", "Axis");
+        add("noodling.gui.radians", "Radians");
+        add("noodling.shape.random", "Random pasta");
+
+        LinkedHashSet<String> paramNames = new LinkedHashSet<>();
+        for (PastaShape shape : PastaShapes.ALL) {
+            add(shape.descriptionId(), titleCase(shape.id()));
+            for (PastaParam param : shape.params()) {
+                if (paramNames.add(param.name())) {
+                    add(param.descriptionId(), titleCase(param.name()));
+                }
+            }
         }
     }
 

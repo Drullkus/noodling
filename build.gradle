@@ -32,7 +32,8 @@ sourceSets {
 }
 
 repositories {
-    // Add here additional repositories if required by some of the dependencies below.
+    // imgui-java (binding and natives) is published on Maven Central.
+    mavenCentral()
 }
 
 base {
@@ -153,6 +154,14 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
     datagenImplementation sourceSets.main.output
+
+    // Dear ImGui through imgui-java. The binding and the three native jars are nested into the mod jar (Jar-in-Jar), so
+    // the mod has no external download step. Only the binding is used; the GLFW and OpenGL backends shipped by
+    // imgui-java are not, because Minecraft 26.3 uses SDL3 for windowing and a Vulkan/OpenGL abstraction for drawing.
+    jarJar(implementation("io.github.spair:imgui-java-binding:${imgui_version}"))
+    jarJar(implementation("io.github.spair:imgui-java-natives-windows:${imgui_version}"))
+    jarJar(implementation("io.github.spair:imgui-java-natives-linux:${imgui_version}"))
+    jarJar(implementation("io.github.spair:imgui-java-natives-macos:${imgui_version}"))
 
     testImplementation "org.junit.jupiter:junit-jupiter:${junit_version}"
     testRuntimeOnly "org.junit.platform:junit-platform-launcher"

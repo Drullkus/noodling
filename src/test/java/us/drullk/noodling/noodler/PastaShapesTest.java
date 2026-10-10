@@ -1,0 +1,152 @@
+package us.drullk.noodling.noodler;
+
+import net.minecraft.util.RandomSource;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import us.drullk.noodling.Noodling;
+
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+/**
+ * Checks every shape descriptor: rolled slider values lie inside the live bounds, integer sliders roll whole
+ * numbers, the pasta block is one of the mod's blocks, and the Noodler's per-parameter resolution honours locks,
+ * seeds and manual values.
+ *
+ * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
+ */
+class PastaShapesTest {
+
+    private static final int ROLLS = 300;
+    private static final float TOLERANCE = 1.0e-4F;
+
+    static List<PastaShape> shapes() {
+        return PastaShapes.ALL;
+    }
+
+    @Test
+    void everyShapeHasRotationAndPastaAndUniqueIds() {
+        Set<String> ids = new HashSet<>();
+        for (PastaShape shape : PastaShapes.ALL) {
+            assertTrue(ids.add(shape.id()), "duplicate shape id " + shape.id());
+            assertNotNull(shape.param(PastaParam.ROTATION), shape.id() + " has no rotation");
+            assertNotNull(shape.param(PastaParam.PASTA), shape.id() + " has no pasta block");
+            assertEquals(shape, PastaShapes.byId(shape.id()));
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("shapes")
+    void rolledValuesLieInsideLiveBounds(PastaShape shape) {
+        for (int roll = 0; roll < ROLLS; roll++) {
+            ResolvedParams values = new ResolvedParams();
+            RandomSource random = RandomSource.create(roll * 7919L);
+            for (PastaParam param : shape.params()) {
+                PastaParam.Bounds bounds = param.bounds(values);
+                ParamValue value = param.roll(random, values);
+                assertTrue(param.accepts(value), shape.id() + "." + param.name() + " rolled the wrong type");
+                switch (param.kind()) {
+                    case FLOAT_SLIDER, INT_SLIDER -> {
+                        assertNotNull(bounds, shape.id() + "." + param.name() + " has no bounds");
+                        float f = ((ParamValue.Num) value).asFloat();
+                        assertTrue(f >= bounds.min() - TOLERANCE && f <= bounds.max() + TOLERANCE,
+                                shape.id() + "." + param.name() + " rolled " + f + " outside " + bounds);
+                        assertTrue(bounds.min() <= bounds.max(), shape.id() + "." + param.name() + " has inverted bounds " + bounds);
+                        if (param.kind() == PastaParam.Kind.INT_SLIDER) {
+                            double d = ((ParamValue.Num) value).value();
+                            assertEquals(Math.rint(d), d, shape.id() + "." + param.name() + " rolled a fraction");
+                        }
+                    }
+                    case FLOAT_FIELD -> assertTrue(Float.isFinite(((ParamValue.Num) value).asFloat()));
+                    case BLOCK -> {
+                        var block = ((ParamValue.Block) value).state().getBlock();
+                        assertTrue(Noodling.PASTA_BLOCKS.stream().anyMatch(holder -> holder.get() == block), shape.id() + " rolled a non-pasta block");
+                    }
+                    case ROTATION -> {
+                        var rotation = ((ParamValue.Rotation) value).toQuaternion();
+                        assertTrue(Double.isFinite(rotation.x + rotation.y + rotation.z + rotation.w));
+                    }
+                }
+                values.put(param.name(), value);
+            }
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("shapes")
+    void resolveAllMatchesManualRollOrder(PastaShape shape) {
+        ResolvedParams a = shape.resolveAll(RandomSource.create(99L));
+        ResolvedParams b = shape.resolveAll(RandomSource.create(99L));
+        assertEquals(a.values(), b.values());
+    }
+
+    @Test
+    void lockedSeedIsDeterministicAndUnlockedParamsFollowTheNoodlerSeed() {
+        PastaShape shell = PastaShapes.byId("shell");
+        assertNotNull(shell);
+        NoodlerState state = NoodlerState.DEFAULT.withParams(Map.of("diameter", new ParamState("1234", true, Optional.empty())));
+
+        Map<String, ParamState> firstOut = new LinkedHashMap<>();
+        ResolvedParams first = NoodlerPlacement.resolve(shell, state, 5L, firstOut);
+        Map<String, ParamState> secondOut = new LinkedHashMap<>();
+        ResolvedParams second = NoodlerPlacement.resolve(shell, state, 5L, secondOut);
+        assertEquals(first.values(), second.values(), "same Noodler seed must give the same shape");
+
+        Map<String, ParamState> otherOut = new LinkedHashMap<>();
+        ResolvedParams other = NoodlerPlacement.resolve(shell, state, 6L, otherOut);
+        assertEquals(first.f("diameter"), other.f("diameter"), "locked seed must not follow the Noodler seed");
+        assertTrue(first.f("height") != other.f("height") || first.f("taper_factor") != other.f("taper_factor"), "unlocked parameters must follow the Noodler seed");
+
+        ParamState diameter = firstOut.get("diameter");
+        assertEquals("1234", diameter.seed());
+        assertTrue(diameter.locked());
+        assertEquals(first.f("diameter"), ((ParamValue.Num) diameter.value().orElseThrow()).asFloat());
+
+        ParamState height = firstOut.get("height");
+        assertTrue(!height.locked());
+        assertEquals(NoodlerSeeds.text(NoodlerSeeds.derive(5L, 2)), height.seed(), "unlocked parameters record their derived seed");
+        assertEquals(shell.params().size(), firstOut.size());
+    }
+
+    @Test
+    void manualValueIsUsedAsTyped() {
+        PastaShape penne = PastaShapes.byId("penne");
+        assertNotNull(penne);
+        NoodlerState state = NoodlerState.DEFAULT.withParams(Map.of("height", new ParamState("", true, Optional.of(ParamValue.Num.of(64.25F)))));
+        Map<String, ParamState> out = new LinkedHashMap<>();
+        ResolvedParams resolved = NoodlerPlacement.resolve(penne, state, 1L, out);
+        assertEquals(64.25F, resolved.f("height"));
+        assertEquals(state.param("height"), out.get("height"));
+    }
+
+    @Test
+    void lockedWithoutSeedOrValueRollsAndRecordsASeed() {
+        PastaShape penne = PastaShapes.byId("penne");
+        assertNotNull(penne);
+        NoodlerState state = NoodlerState.DEFAULT.withParams(Map.of("height", new ParamState("", true, Optional.empty())));
+        Map<String, ParamState> out = new LinkedHashMap<>();
+        NoodlerPlacement.resolve(penne, state, 1L, out);
+        ParamState height = out.get("height");
+        assertTrue(height.locked());
+        assertEquals(NoodlerSeeds.text(NoodlerSeeds.derive(1L, 1)), height.seed());
+        assertTrue(height.value().isPresent());
+    }
+
+    @Test
+    void seedResolution() {
+        RandomSource random = RandomSource.create(3L);
+        long rolled = RandomSource.create(3L).nextLong();
+        assertEquals(rolled, NoodlerPlacement.resolveSeed(NoodlerState.DEFAULT, random), "unlocked rolls a fresh seed");
+        assertEquals(42L, NoodlerPlacement.resolveSeed(new NoodlerState("42", true, Optional.empty(), Map.of()), RandomSource.create(3L)));
+        assertEquals("abc".hashCode(), NoodlerPlacement.resolveSeed(new NoodlerState("abc", true, Optional.empty(), Map.of()), RandomSource.create(3L)));
+    }
+}

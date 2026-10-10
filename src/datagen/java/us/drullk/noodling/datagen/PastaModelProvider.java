@@ -3,6 +3,8 @@ package us.drullk.noodling.datagen;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.ModelProvider;
+import net.minecraft.client.data.models.model.ItemModelUtils;
+import net.minecraft.client.data.models.model.ModelLocationUtils;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TexturedModel;
@@ -10,6 +12,7 @@ import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import us.drullk.noodling.Noodling;
 
@@ -21,7 +24,10 @@ import us.drullk.noodling.Noodling;
  * the files in {@code assets/noodling/textures/block}. Item models are not written explicitly: the vanilla
  * {@link ModelProvider} emits a model for every {@code BlockItem} of this mod that points at its block model.
  *
+ * <p>The Noodler is a flat item whose placeholder sprite is the wheat pasta block texture.
+ *
  * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-08_b2d8f02b-624c-4f11-b4f8-507057a1af26.md}.
+ * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
  */
 public class PastaModelProvider extends ModelProvider {
 
@@ -40,6 +46,11 @@ public class PastaModelProvider extends ModelProvider {
         for (var pasta : Noodling.PASTA_BLOCKS) {
             blockModels.createTrivialBlock(pasta.get(), PASTA_CUBE);
         }
+
+        Item noodler = Noodling.NOODLER.get();
+        Identifier noodlerModel = ModelTemplates.FLAT_ITEM.create(ModelLocationUtils.getModelLocation(noodler),
+                TextureMapping.layer0(pastaTexture(Noodling.WHEAT_PASTA_BLOCK.get())), itemModels.modelOutput);
+        itemModels.itemModelOutput.accept(noodler, ItemModelUtils.plainModel(noodlerModel));
     }
 
     private static Material pastaTexture(Block block) {

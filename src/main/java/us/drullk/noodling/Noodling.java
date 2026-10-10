@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
@@ -20,6 +21,9 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import us.drullk.noodling.commands.PastaCommands;
+import us.drullk.noodling.network.NoodlerPayloads;
+import us.drullk.noodling.noodler.NoodlerComponents;
+import us.drullk.noodling.noodler.NoodlerItem;
 
 import java.util.List;
 
@@ -51,6 +55,14 @@ public class Noodling {
     public static final DeferredItem<BlockItem> BEETROOT_PASTA_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("beetroot_pasta_block", BEETROOT_PASTA_BLOCK);
     public static final DeferredItem<BlockItem> SQUID_INK_PASTA_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("squid_ink_pasta_block", SQUID_INK_PASTA_BLOCK);
 
+    /**
+     * The Noodler places random pasta where the player looks. It does not stack, has Epic rarity, no recipe and no
+     * durability. Its settings live in {@link NoodlerComponents}.
+     *
+     * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
+     */
+    public static final DeferredItem<NoodlerItem> NOODLER = ITEMS.registerItem("noodler", NoodlerItem::new, p -> p.stacksTo(1).rarity(Rarity.EPIC));
+
     //public static final DeferredItem<Item> EXAMPLE_ITEM = ITEMS.registerSimpleItem("example_item", p -> p.food(new FoodProperties.Builder()
     //        .alwaysEdible().nutrition(1).saturationModifier(2f).build()));
 
@@ -59,6 +71,7 @@ public class Noodling {
             .withTabsBefore(CreativeModeTabs.COMBAT)
             .icon(WHEAT_PASTA_BLOCK::toStack)
             .displayItems((parameters, output) -> {
+                output.accept(NOODLER.get()); // First slot; registration added by Claude Code, see NOODLER.
                 output.accept(WHEAT_PASTA_BLOCK.get());
                 output.accept(TOMATO_PASTA_BLOCK.get());
                 output.accept(CARROT_PASTA_BLOCK.get());
@@ -68,10 +81,17 @@ public class Noodling {
                 output.accept(SQUID_INK_PASTA_BLOCK.get());
             }).build());
 
+    /**
+     * Registers the deferred registers, the Noodler's data components and payloads, and the commands.
+     *
+     * <p>Noodler registration written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
+     */
     public Noodling(IEventBus modEventBus, ModContainer modContainer) {
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
+        NoodlerComponents.REGISTER.register(modEventBus);
+        modEventBus.addListener(NoodlerPayloads::register);
 
         NeoForge.EVENT_BUS.addListener(new PastaCommands()::registerCommands);
     }
