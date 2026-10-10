@@ -1,6 +1,5 @@
 package us.drullk.noodling.pasta;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Ease;
 import net.minecraft.util.Mth;
@@ -21,15 +20,13 @@ public class MacaroniPlacer {
         this.helper = helper;
     }
 
-    public void placeRandomMacaroni(ServerLevel level, BlockPos centerPos) {
-        RandomSource random = level.getRandom().forkPositional().at(centerPos);
-
+    public void placeRandomMacaroni(ServerLevel level, Vec3 center, RandomSource random) {
         float diameter = Mth.lerp(random.nextFloat(), 8, 10);
         float height = random.triangle(35, 5);
         float thickness = 2.5f;
         float curve = Mth.lerp(Ease.inOutQuad(random.nextFloat()), height * 0.75f, height * 2f);
 
-        this.placeMacaroni(level, new Vec3(centerPos), this.helper.nextRotation(random), this.helper.getRandomPastaBlock(random), diameter, height, curve, thickness);
+        this.placeMacaroni(level, center, this.helper.nextRotation(random), this.helper.getRandomPastaBlock(random), diameter, height, curve, thickness);
     }
 
     public void placeMacaroni(ServerLevel level, Vec3 center, Quaterniond rotation, BlockState pasta, float diameter, float height, float curve, float thickness) {

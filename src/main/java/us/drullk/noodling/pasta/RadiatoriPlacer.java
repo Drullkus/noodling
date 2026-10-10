@@ -1,6 +1,5 @@
 package us.drullk.noodling.pasta;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -20,9 +19,7 @@ public class RadiatoriPlacer {
         this.helper = helper;
     }
 
-    public void placeRandomRadiatori(ServerLevel level, BlockPos centerPos) {
-        RandomSource random = level.getRandom().forkPositional().at(centerPos);
-
+    public void placeRandomRadiatori(ServerLevel level, Vec3 center, RandomSource random) {
         // Each radiatori piece curls differently, and not as aggressively to become a pasta conch (shell).
         float diameterHead = Mth.lerp(random.nextFloat(), 6, 12), diameterTail = Mth.lerp(random.nextFloat(), 6, 12);
         float coreThickness = 2.5f;
@@ -41,7 +38,7 @@ public class RadiatoriPlacer {
         // Radiatori shouldn't close as a circle, but more often than not comes close. Pow2 biases for nearing a complete circle.
         float cutoffRadian = Mth.lerp(Mth.square(random.nextFloat()), 0.9f, 2f/3f) * Mth.TWO_PI;
 
-        this.placeRadiatori(level, new Vec3(centerPos), this.helper.nextRotation(random), this.helper.getRandomPastaBlock(random), diameterHead, diameterTail, finHeight, finWidth, finSpacing, fins, cutoffRadian, finFrillingFreqHead, finFrillingFreqTail, finFrillingAmpHead, finFrillingAmpTail, coreThickness);
+        this.placeRadiatori(level, center, this.helper.nextRotation(random), this.helper.getRandomPastaBlock(random), diameterHead, diameterTail, finHeight, finWidth, finSpacing, fins, cutoffRadian, finFrillingFreqHead, finFrillingFreqTail, finFrillingAmpHead, finFrillingAmpTail, coreThickness);
     }
 
     public void placeRadiatori(ServerLevel level, Vec3 center, Quaterniond rotation, BlockState pasta, float diameterHead, float diameterTail, float finHeight, float finWidth, float finSpacing, int fins, float cutoffRadian, float finFrillingFreqHead, float finFrillingFreqTail, float finFrillingAmpHead, float finFrillingAmpTail, float coreThickness) {

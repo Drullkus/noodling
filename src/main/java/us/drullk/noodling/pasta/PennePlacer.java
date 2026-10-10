@@ -1,6 +1,5 @@
 package us.drullk.noodling.pasta;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -20,13 +19,11 @@ public class PennePlacer {
         this.helper = helper;
     }
 
-    public void placeRandomPenne(ServerLevel level, BlockPos centerPos) {
-        RandomSource random = level.getRandom().forkPositional().at(centerPos);
-
+    public void placeRandomPenne(ServerLevel level, Vec3 center, RandomSource random) {
         float diameter = Mth.lerp(random.nextFloat(), 12, 16);
         float height = Mth.lerp(random.nextFloat(), 50, 80);
 
-        this.placePenne(level, new Vec3(centerPos), this.helper.nextRotation(random), this.helper.getRandomPastaBlock(random), diameter, height);
+        this.placePenne(level, center, this.helper.nextRotation(random), this.helper.getRandomPastaBlock(random), diameter, height);
     }
 
     public void placePenne(ServerLevel level, Vec3 center, Quaterniond rotation, BlockState pasta, float diameter, float height) {

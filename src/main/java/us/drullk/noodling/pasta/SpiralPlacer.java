@@ -1,6 +1,5 @@
 package us.drullk.noodling.pasta;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -20,18 +19,16 @@ public class SpiralPlacer {
         this.helper = helper;
     }
 
-    public void placeRandomSpiral(ServerLevel level, BlockPos centerPos) {
-        RandomSource random = level.getRandom().forkPositional().at(centerPos);
-
+    public void placeRandomSpiral(ServerLevel level, Vec3 center, RandomSource random) {
         float diameter = Mth.lerp(random.nextFloat(), 12, 16);
         float height = Mth.lerp(random.nextFloat(), 50, 80);
         float thickness = Mth.lerp(Mth.square(random.nextFloat()), 2f, diameter * 0.25f);
         float twist = 1f / Mth.lerp(random.nextFloat(), 3f, 8f);
 
-        this.placeSpiral(level, diameter, new Vec3(centerPos), this.helper.nextRotation(random), height, thickness, twist, this.helper.getRandomPastaBlock(random));
+        this.placeSpiral(level, center, this.helper.nextRotation(random), this.helper.getRandomPastaBlock(random), diameter, height, thickness, twist);
     }
 
-    private void placeSpiral(ServerLevel level, float diameter, Vec3 center, Quaterniond rotation, float height, float thickness, float twist, BlockState pasta) {
+    public void placeSpiral(ServerLevel level, Vec3 center, Quaterniond rotation, BlockState pasta, float diameter, float height, float thickness, float twist) {
         float radius = diameter * 0.5f;
         InnerSpaceIterable spaceIterator = InnerSpaceIterable.centered(center, rotation, diameter, height, diameter);
         for (InnerSpacePos innerSpacePos : spaceIterator) {

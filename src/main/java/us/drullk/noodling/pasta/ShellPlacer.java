@@ -1,6 +1,5 @@
 package us.drullk.noodling.pasta;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -20,18 +19,16 @@ public class ShellPlacer {
         this.helper = helper;
     }
 
-    public void placeRandomShell(ServerLevel level, BlockPos centerPos) {
-        RandomSource random = level.getRandom().forkPositional().at(centerPos);
-
+    public void placeRandomShell(ServerLevel level, Vec3 center, RandomSource random) {
         float diameter = Mth.lerp(random.nextFloat(), 12, 16);
         float thickness = 2.5f;
         float height = diameter * random.triangle(1.25f, 0.2f);
         float taperFactor = Mth.lerp(random.nextFloat(), 2, 3);
 
-        this.placeShell(level, new Vec3(centerPos), this.helper.nextRotation(random), this.helper.getRandomPastaBlock(random), height, diameter, taperFactor, thickness);
+        this.placeShell(level, center, this.helper.nextRotation(random), this.helper.getRandomPastaBlock(random), height, diameter, taperFactor, thickness);
     }
 
-    private void placeShell(ServerLevel level, Vec3 center, Quaterniond rotation, BlockState pasta, float height, float diameter, float taperFactor, float thickness) {
+    public void placeShell(ServerLevel level, Vec3 center, Quaterniond rotation, BlockState pasta, float height, float diameter, float taperFactor, float thickness) {
         float halfHeight = height * 0.65f; // Slightly over half, or else orphaned voxels (blocks) will place
         float radius = diameter * 0.5f;
         InnerSpaceIterable spaceIterator = InnerSpaceIterable.centered(center, rotation, diameter, height, diameter);

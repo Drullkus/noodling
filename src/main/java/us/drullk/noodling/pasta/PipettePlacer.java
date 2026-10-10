@@ -1,6 +1,5 @@
 package us.drullk.noodling.pasta;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -20,9 +19,7 @@ public class PipettePlacer {
         this.helper = helper;
     }
 
-    public void placeRandomPipette(ServerLevel level, BlockPos centerPos) {
-        RandomSource random = level.getRandom().forkPositional().at(centerPos);
-
+    public void placeRandomPipette(ServerLevel level, Vec3 center, RandomSource random) {
         float diameter = 14;
         float radius = diameter * 0.5f;
         float pinchRadiusHead = Mth.lerp(random.nextFloat(), radius * 0.5f, radius), pinchRadiusTail = Mth.lerp(random.nextFloat(), radius * 0.5f, radius);
@@ -30,7 +27,7 @@ public class PipettePlacer {
         float thickness = 3.125f;
         float curve = height * 0.75f;
 
-        this.placePipette(level, new Vec3(centerPos), this.helper.nextRotation(random), this.helper.getRandomPastaBlock(random), diameter, height, curve, radius, pinchRadiusHead, pinchRadiusTail, thickness);
+        this.placePipette(level, center, this.helper.nextRotation(random), this.helper.getRandomPastaBlock(random), diameter, height, curve, radius, pinchRadiusHead, pinchRadiusTail, thickness);
     }
 
     public void placePipette(ServerLevel level, Vec3 center, Quaterniond rotation, BlockState pasta, float diameter, float height, float curve, float radius, float pinchRadiusHead, float pinchRadiusTail, float thickness) {
