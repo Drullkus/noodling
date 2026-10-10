@@ -1,13 +1,18 @@
 package us.drullk.noodling.pasta;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.LevelSimulatedRW;
 import net.minecraft.world.level.LevelWriter;
 import net.minecraft.util.Ease;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaterniond;
+import us.drullk.noodling.Noodling;
 import us.drullk.noodling.shape.InnerSpaceIterable;
 import us.drullk.noodling.shape.InnerSpacePos;
 import org.jspecify.annotations.Nullable;
@@ -32,7 +37,7 @@ public class MacaroniPlacer {
      *
      * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
      */
-    public void placeRandomMacaroni(LevelWriter level, Vec3 center, RandomSource random) {
+    public void placeRandomMacaroni(LevelSimulatedRW level, Vec3 center, RandomSource random) {
         this.shape().placeRandom(level, center, random);
     }
 
@@ -50,19 +55,26 @@ public class MacaroniPlacer {
                     .param(PastaParam.floatSlider("curve", (random, siblings) -> Mth.lerp(Ease.inOutQuad(random.nextFloat()), siblings.f("height") * 0.75f, siblings.f("height") * 2f), siblings -> new PastaParam.Bounds(siblings.f("height") * 0.75f, siblings.f("height") * 2f)))
                     .param(PastaParam.rotation(this.helper))
                     .param(PastaParam.pasta(this.helper))
-                    .place((level, center, params) -> this.placeMacaroni(level, center, params.rotation(), params.pasta(), params.f("diameter"), params.f("height"), params.f("curve"), params.f("thickness")));
+                    .place((level, center, params) -> this.placeMacaroni(level, center, params.rotation(), params.pasta(), Noodling.CHEDDAR_SAUCE_BLOCK.value().defaultBlockState(), params.f("diameter"), params.f("height"), params.f("curve"), params.f("thickness")));
         }
         return this.shape;
     }
 
-    public void placeMacaroni(LevelWriter level, Vec3 center, Quaterniond rotation, BlockState pasta, float diameter, float height, float curve, float thickness) {
+    public void placeMacaroni(LevelSimulatedRW level, Vec3 center, Quaterniond rotation, BlockState pasta, BlockState sauce, float diameter, float height, float curve, float thickness) {
         float radius = diameter * 0.5f;
         InnerSpaceIterable spaceIterator = InnerSpaceIterable.centered(center, rotation, diameter, height, diameter);
         for (InnerSpacePos innerSpacePos : spaceIterator.bentByRadius(curve)) {
             float sampledRadius = Mth.length(innerSpacePos.innerX(), innerSpacePos.innerZ());
 
             boolean solid = sampledRadius > radius - thickness && sampledRadius < radius;
-            if (solid) level.setBlock(innerSpacePos.toBlockPos(), pasta, Block.UPDATE_ALL);
+            if (solid) {
+                BlockPos pos = innerSpacePos.toBlockPos();
+                level.setBlock(pos, pasta, Block.UPDATE_ALL);
+                BlockPos above = pos.above();
+                if (level.isStateAtPosition(above, BlockBehaviour.BlockStateBase::isAir)) {
+                    level.setBlock(above, sauce, Block.UPDATE_ALL);
+                }
+            }
         }
     }
 

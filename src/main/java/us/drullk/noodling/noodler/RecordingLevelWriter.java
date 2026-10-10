@@ -7,26 +7,28 @@ import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.LevelSimulatedRW;
 import net.minecraft.world.level.LevelWriter;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.material.FluidState;
 import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Predicate;
 
 /**
- * A {@link LevelWriter} that keeps every block a placer writes instead of changing a world, and turns the result
+ * A {@link LevelSimulatedRW} that keeps every block a placer writes instead of changing a world, and turns the result
  * into a structure template tag in the same layout {@code StructureTemplate#save} produces (size, palette, blocks,
  * entities, DataVersion). Positions are shifted so the lowest corner is the origin; cells nothing wrote are left out
  * of the block list, which a structure template treats as structure void.
  *
  * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
  */
-public final class RecordingLevelWriter implements LevelWriter {
+public final class RecordingLevelWriter implements LevelSimulatedRW {
 
     private final Map<BlockPos, BlockState> blocks = new LinkedHashMap<>();
     private @Nullable BlockPos min;
@@ -101,5 +103,25 @@ public final class RecordingLevelWriter implements LevelWriter {
             list.add(IntTag.valueOf(value));
         }
         return list;
+    }
+
+    @Override
+    public boolean isStateAtPosition(BlockPos pos, Predicate<BlockState> predicate) {
+        return predicate.test(this.blocks.getOrDefault(pos, Blocks.AIR.defaultBlockState()));
+    }
+
+    @Override
+    public boolean isFluidAtPosition(BlockPos pos, Predicate<FluidState> predicate) {
+        return predicate.test(this.blocks.getOrDefault(pos, Blocks.AIR.defaultBlockState()).getFluidState());
+    }
+
+    @Override
+    public <T extends BlockEntity> Optional<T> getBlockEntity(BlockPos pos, BlockEntityType<T> type) {
+        return Optional.empty();
+    }
+
+    @Override
+    public BlockPos getHeightmapPos(Heightmap.Types type, BlockPos pos) {
+        return pos;
     }
 }

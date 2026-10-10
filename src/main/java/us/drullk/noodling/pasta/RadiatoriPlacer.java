@@ -1,9 +1,13 @@
 package us.drullk.noodling.pasta;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.LevelSimulatedRW;
 import net.minecraft.world.level.LevelWriter;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaterniond;
@@ -31,7 +35,7 @@ public class RadiatoriPlacer {
      *
      * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
      */
-    public void placeRandomRadiatori(LevelWriter level, Vec3 center, RandomSource random) {
+    public void placeRandomRadiatori(LevelSimulatedRW level, Vec3 center, RandomSource random) {
         this.shape().placeRandom(level, center, random);
     }
 
@@ -57,14 +61,14 @@ public class RadiatoriPlacer {
                     .param(PastaParam.floatSlider("cutoff_radian", (random, siblings) -> Mth.lerp(Mth.square(random.nextFloat()), 0.9f, 2f/3f) * Mth.TWO_PI, siblings -> new PastaParam.Bounds(2f/3f * Mth.TWO_PI, 0.9f * Mth.TWO_PI)))
                     .param(PastaParam.rotation(this.helper))
                     .param(PastaParam.pasta(this.helper))
-                    .place((level, center, params) -> this.placeRadiatori(level, center, params.rotation(), params.pasta(),
+                    .place((level, center, params) -> this.placeRadiatori(level, center, params.rotation(), params.pasta(), Blocks.AIR.defaultBlockState(),
                             params.f("diameter_head"), params.f("diameter_tail"), params.f("fin_height"), params.f("fin_width"), params.f("fin_spacing"), params.i("fins"), params.f("cutoff_radian"),
                             params.f("fin_frilling_freq_head"), params.f("fin_frilling_freq_tail"), params.f("fin_frilling_amp_head"), params.f("fin_frilling_amp_tail"), params.f("core_thickness")));
         }
         return this.shape;
     }
 
-    public void placeRadiatori(LevelWriter level, Vec3 center, Quaterniond rotation, BlockState pasta, float diameterHead, float diameterTail, float finHeight, float finWidth, float finSpacing, int fins, float cutoffRadian, float finFrillingFreqHead, float finFrillingFreqTail, float finFrillingAmpHead, float finFrillingAmpTail, float coreThickness) {
+    public void placeRadiatori(LevelSimulatedRW level, Vec3 center, Quaterniond rotation, BlockState pasta, BlockState sauce, float diameterHead, float diameterTail, float finHeight, float finWidth, float finSpacing, int fins, float cutoffRadian, float finFrillingFreqHead, float finFrillingFreqTail, float finFrillingAmpHead, float finFrillingAmpTail, float coreThickness) {
         float radiusHead = diameterHead * 0.5f, radiusTail = diameterTail * 0.5f;
         float diameterMax = Math.max(diameterHead, diameterTail) + finHeight * 2f;
         float finUnit = finWidth + finSpacing;
@@ -95,7 +99,14 @@ public class RadiatoriPlacer {
                     && fin >= 0 && fin < fins; // Avoid extra fins/stray voxels via rounding error.
 
             boolean solid = sampledRadius > radiusThreshold - coreThickness && sampledRadius < radiusThreshold + (isYWithinFin ? finHeight : 0f);
-            if (solid) level.setBlock(innerSpacePos.toBlockPos(), pasta, Block.UPDATE_ALL);
+            if (solid) {
+                BlockPos pos = innerSpacePos.toBlockPos();
+                level.setBlock(pos, pasta, Block.UPDATE_ALL);
+                BlockPos above = pos.above();
+                if (level.isStateAtPosition(above, BlockBehaviour.BlockStateBase::isAir)) {
+                    level.setBlock(above, sauce, Block.UPDATE_ALL);
+                }
+            }
         }
     }
 

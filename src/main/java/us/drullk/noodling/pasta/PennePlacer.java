@@ -1,9 +1,13 @@
 package us.drullk.noodling.pasta;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.LevelSimulatedRW;
 import net.minecraft.world.level.LevelWriter;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaterniond;
@@ -31,7 +35,7 @@ public class PennePlacer {
      *
      * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
      */
-    public void placeRandomPenne(LevelWriter level, Vec3 center, RandomSource random) {
+    public void placeRandomPenne(LevelSimulatedRW level, Vec3 center, RandomSource random) {
         this.shape().placeRandom(level, center, random);
     }
 
@@ -47,12 +51,12 @@ public class PennePlacer {
                     .param(PastaParam.floatSlider("height", (random, siblings) -> Mth.lerp(random.nextFloat(), 50, 80), siblings -> new PastaParam.Bounds(50, 80)))
                     .param(PastaParam.rotation(this.helper))
                     .param(PastaParam.pasta(this.helper))
-                    .place((level, center, params) -> this.placePenne(level, center, params.rotation(), params.pasta(), params.f("diameter"), params.f("height")));
+                    .place((level, center, params) -> this.placePenne(level, center, params.rotation(), params.pasta(), Blocks.AIR.defaultBlockState(), params.f("diameter"), params.f("height")));
         }
         return this.shape;
     }
 
-    public void placePenne(LevelWriter level, Vec3 center, Quaterniond rotation, BlockState pasta, float diameter, float height) {
+    public void placePenne(LevelSimulatedRW level, Vec3 center, Quaterniond rotation, BlockState pasta, BlockState sauce, float diameter, float height) {
         float radius = diameter * 0.5f;
         InnerSpaceIterable spaceIterator = InnerSpaceIterable.centered(center, rotation, diameter, height, diameter);
         for (InnerSpacePos innerSpacePos : spaceIterator) {
@@ -60,7 +64,14 @@ public class PennePlacer {
 
             boolean solid = sampledRadius > radius * 0.667f && sampledRadius < radius // Filter positions for inside and outside the hollow cylinder
                     && 0 > Math.abs(innerSpacePos.innerX() - innerSpacePos.innerY()) * 2 + diameter - height; // Angled cutoffs for the ends
-            if (solid) level.setBlock(innerSpacePos.toBlockPos(), pasta, Block.UPDATE_ALL);
+            if (solid) {
+                BlockPos pos = innerSpacePos.toBlockPos();
+                level.setBlock(pos, pasta, Block.UPDATE_ALL);
+                BlockPos above = pos.above();
+                if (level.isStateAtPosition(above, BlockBehaviour.BlockStateBase::isAir)) {
+                    level.setBlock(above, sauce, Block.UPDATE_ALL);
+                }
+            }
         }
     }
 

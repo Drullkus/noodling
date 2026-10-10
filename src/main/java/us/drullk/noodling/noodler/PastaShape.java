@@ -1,5 +1,6 @@
 package us.drullk.noodling.noodler;
 
+import net.minecraft.world.level.LevelSimulatedRW;
 import net.minecraft.world.level.LevelWriter;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.Vec3;
@@ -23,7 +24,7 @@ public final class PastaShape {
 
     @FunctionalInterface
     public interface Placement {
-        void place(LevelWriter level, Vec3 center, ResolvedParams params);
+        void place(LevelSimulatedRW level, Vec3 center, ResolvedParams params);
     }
 
     private final String id;
@@ -71,11 +72,11 @@ public final class PastaShape {
         return values;
     }
 
-    public void place(LevelWriter level, Vec3 center, ResolvedParams params) {
+    public void place(LevelSimulatedRW level, Vec3 center, ResolvedParams params) {
         this.placement.place(level, center, params);
     }
 
-    public void placeRandom(LevelWriter level, Vec3 center, RandomSource random) {
+    public void placeRandom(LevelSimulatedRW level, Vec3 center, RandomSource random) {
         this.place(level, center, this.resolveAll(random));
     }
 
