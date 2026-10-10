@@ -2,11 +2,9 @@ package us.drullk.noodling.pasta;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelSimulatedRW;
-import net.minecraft.world.level.LevelWriter;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -43,6 +41,7 @@ public class PipettePlacer {
      * Describes pipette pasta for the Noodler. Radius and curve are derived fields that follow the diameter and height; only the two pinch radii are random.
      *
      * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
+     * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_c3299adc-f781-48a8-9c79-c51c79b26b4b.md}.
      */
     public PastaShape shape() {
         if (this.shape == null) {
@@ -56,7 +55,8 @@ public class PipettePlacer {
                     .param(PastaParam.floatField("curve", siblings -> siblings.f("height") * 0.75f))
                     .param(PastaParam.rotation(this.helper))
                     .param(PastaParam.pasta(this.helper))
-                    .place((level, center, params) -> this.placePipette(level, center, params.rotation(), params.pasta(), Blocks.AIR.defaultBlockState(),
+                    .param(PastaParam.sauce(this.helper))
+                    .place((level, center, params) -> this.placePipette(level, center, params.rotation(), params.pasta(), params.sauce(),
                             params.f("diameter"), params.f("height"), params.f("curve"), params.f("radius"), params.f("pinch_radius_head"), params.f("pinch_radius_tail"), params.f("thickness")));
         }
         return this.shape;
@@ -77,7 +77,7 @@ public class PipettePlacer {
                 BlockPos pos = innerSpacePos.toBlockPos();
                 level.setBlock(pos, pasta, Block.UPDATE_ALL);
                 BlockPos above = pos.above();
-                if (level.isStateAtPosition(above, BlockBehaviour.BlockStateBase::isAir)) {
+                if (!sauce.isAir() && level.isStateAtPosition(above, BlockBehaviour.BlockStateBase::isAir)) {
                     level.setBlock(above, sauce, Block.UPDATE_ALL);
                 }
             }

@@ -12,10 +12,11 @@ import org.joml.Quaterniond;
  * One value that a pasta shape parameter can hold.
  *
  * <p>Numbers cover both float sliders and integer sliders (an integer is stored as a whole double). A block value
- * holds the pasta block state. A rotation holds the axis-angle pair that the Noodler GUI shows; it converts to the
+ * holds the pasta block state, or the sauce block state (air for no sauce). A rotation holds the axis-angle pair that the Noodler GUI shows; it converts to the
  * {@link Quaterniond} that the placers take.
  *
  * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
+ * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_c3299adc-f781-48a8-9c79-c51c79b26b4b.md}.
  */
 public sealed interface ParamValue permits ParamValue.Num, ParamValue.Block, ParamValue.Rotation {
 
@@ -56,7 +57,7 @@ public sealed interface ParamValue permits ParamValue.Num, ParamValue.Block, Par
         }
     }
 
-    /** The pasta block state. */
+    /** A pasta block state, or a sauce block state where air means no sauce. */
     record Block(BlockState state) implements ParamValue {
         static final String TYPE = "block";
         static final MapCodec<Block> MAP_CODEC = BlockState.CODEC.fieldOf("state").xmap(Block::new, Block::state);

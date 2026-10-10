@@ -13,6 +13,7 @@ import us.drullk.noodling.util.Util;
  * touch the random source.
  *
  * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
+ * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_c3299adc-f781-48a8-9c79-c51c79b26b4b.md}.
  */
 public final class PastaParam {
 
@@ -20,6 +21,8 @@ public final class PastaParam {
     public static final String ROTATION = "rotation";
     /** Name of the pasta block parameter that every shape declares. */
     public static final String PASTA = "pasta";
+    /** Name of the sauce block parameter that every shape declares. */
+    public static final String SAUCE = "sauce";
 
     /** How the GUI edits the parameter. */
     public enum Kind {
@@ -27,6 +30,8 @@ public final class PastaParam {
         INT_SLIDER,
         FLOAT_FIELD,
         BLOCK,
+        /** A sauce block, or air for no sauce; the GUI shows a dropdown with a "no sauce" entry. */
+        SAUCE,
         ROTATION
     }
 
@@ -103,6 +108,11 @@ public final class PastaParam {
         return new PastaParam(PASTA, Kind.BLOCK, (random, siblings) -> new ParamValue.Block(helper.getRandomPastaBlock(random)), null);
     }
 
+    /** The sauce block (air for no sauce), rolled by {@link Util#getRandomSauceBlock(RandomSource)}. */
+    public static PastaParam sauce(Util helper) {
+        return new PastaParam(SAUCE, Kind.SAUCE, (random, siblings) -> new ParamValue.Block(helper.getRandomSauceBlock(random)), null);
+    }
+
     public String name() {
         return this.name;
     }
@@ -129,7 +139,7 @@ public final class PastaParam {
     public boolean accepts(ParamValue value) {
         return switch (this.kind) {
             case FLOAT_SLIDER, INT_SLIDER, FLOAT_FIELD -> value instanceof ParamValue.Num;
-            case BLOCK -> value instanceof ParamValue.Block;
+            case BLOCK, SAUCE -> value instanceof ParamValue.Block;
             case ROTATION -> value instanceof ParamValue.Rotation;
         };
     }

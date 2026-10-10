@@ -26,6 +26,7 @@ import java.util.Locale;
  * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-08_b2d8f02b-624c-4f11-b4f8-507057a1af26.md}.
  * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
  * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_a8ab6d8e-ef9d-4e9b-9ff7-9d0f96002449.md}.
+ * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_c3299adc-f781-48a8-9c79-c51c79b26b4b.md}.
  */
 public class PastaLanguageProvider extends LanguageProvider {
 
@@ -49,6 +50,7 @@ public class PastaLanguageProvider extends LanguageProvider {
         add("noodling.gui.seed", "Seed");
         add("noodling.gui.lock_seed", "Lock seed");
         add("noodling.gui.pasta", "Pasta");
+        add("noodling.gui.no_sauce", "No sauce");
         add("noodling.gui.param_seed", "Seed");
         add("noodling.gui.param_lock", "Lock");
         add("noodling.gui.param_value", "Value");

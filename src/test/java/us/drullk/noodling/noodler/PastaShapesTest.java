@@ -1,6 +1,8 @@
 package us.drullk.noodling.noodler;
 
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -19,10 +21,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Checks every shape descriptor: rolled slider values lie inside the live bounds, integer sliders roll whole
- * numbers, the pasta block is one of the mod's blocks, and the Noodler's per-parameter resolution honours locks,
- * seeds and manual values.
+ * numbers, the pasta block is one of the mod's blocks, the sauce block is air or one of the sauce blocks with the
+ * intended odds, and the Noodler's per-parameter resolution honours locks, seeds and manual values.
  *
  * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
+ * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_c3299adc-f781-48a8-9c79-c51c79b26b4b.md}.
  */
 class PastaShapesTest {
 
@@ -34,12 +37,15 @@ class PastaShapesTest {
     }
 
     @Test
-    void everyShapeHasRotationAndPastaAndUniqueIds() {
+    void everyShapeHasRotationPastaSauceAndUniqueIds() {
         Set<String> ids = new HashSet<>();
         for (PastaShape shape : PastaShapes.ALL) {
             assertTrue(ids.add(shape.id()), "duplicate shape id " + shape.id());
             assertNotNull(shape.param(PastaParam.ROTATION), shape.id() + " has no rotation");
             assertNotNull(shape.param(PastaParam.PASTA), shape.id() + " has no pasta block");
+            PastaParam sauce = shape.param(PastaParam.SAUCE);
+            assertNotNull(sauce, shape.id() + " has no sauce block");
+            assertEquals(PastaParam.Kind.SAUCE, sauce.kind(), shape.id() + " sauce has the wrong kind");
             assertEquals(shape, PastaShapes.byId(shape.id()));
         }
     }
@@ -71,6 +77,10 @@ class PastaShapesTest {
                         var block = ((ParamValue.Block) value).state().getBlock();
                         assertTrue(Noodling.PASTA_BLOCKS.stream().anyMatch(holder -> holder.get() == block), shape.id() + " rolled a non-pasta block");
                     }
+                    case SAUCE -> {
+                        var state = ((ParamValue.Block) value).state();
+                        assertTrue(state.isAir() || Noodling.SAUCE_BLOCKS.stream().anyMatch(holder -> holder.get() == state.getBlock()), shape.id() + " rolled a non-sauce block");
+                    }
                     case ROTATION -> {
                         var rotation = ((ParamValue.Rotation) value).toQuaternion();
                         assertTrue(Double.isFinite(rotation.x + rotation.y + rotation.z + rotation.w));
@@ -79,6 +89,26 @@ class PastaShapesTest {
                 values.put(param.name(), value);
             }
         }
+    }
+
+    @ParameterizedTest
+    @MethodSource("shapes")
+    void sauceRollsNoSauceHalfTheTimeAndEachSauceASixth(PastaShape shape) {
+        PastaParam sauce = shape.param(PastaParam.SAUCE);
+        assertNotNull(sauce);
+        int rolls = 6000;
+        Map<Block, Integer> counts = new LinkedHashMap<>();
+        RandomSource random = RandomSource.create(2024L);
+        for (int roll = 0; roll < rolls; roll++) {
+            Block block = ((ParamValue.Block) sauce.roll(random, new ResolvedParams())).state().getBlock();
+            counts.merge(block, 1, Integer::sum);
+        }
+        // Expected 3000 for air and 1000 per sauce; the tolerance covers about five standard deviations.
+        assertEquals(3000, counts.getOrDefault(Blocks.AIR, 0), 200, shape.id() + " no-sauce odds");
+        for (var holder : Noodling.SAUCE_BLOCKS) {
+            assertEquals(1000, counts.getOrDefault(holder.get(), 0), 150, shape.id() + " " + holder.getId() + " odds");
+        }
+        assertEquals(1 + Noodling.SAUCE_BLOCKS.size(), counts.size(), shape.id() + " rolled an unexpected block");
     }
 
     @ParameterizedTest

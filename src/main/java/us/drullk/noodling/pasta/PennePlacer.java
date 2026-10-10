@@ -2,11 +2,9 @@ package us.drullk.noodling.pasta;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelSimulatedRW;
-import net.minecraft.world.level.LevelWriter;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -43,6 +41,7 @@ public class PennePlacer {
      * Describes penne for the Noodler: diameter and height sliders, then the rotation and the pasta block.
      *
      * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
+     * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_c3299adc-f781-48a8-9c79-c51c79b26b4b.md}.
      */
     public PastaShape shape() {
         if (this.shape == null) {
@@ -51,7 +50,8 @@ public class PennePlacer {
                     .param(PastaParam.floatSlider("height", (random, siblings) -> Mth.lerp(random.nextFloat(), 50, 80), siblings -> new PastaParam.Bounds(50, 80)))
                     .param(PastaParam.rotation(this.helper))
                     .param(PastaParam.pasta(this.helper))
-                    .place((level, center, params) -> this.placePenne(level, center, params.rotation(), params.pasta(), Blocks.AIR.defaultBlockState(), params.f("diameter"), params.f("height")));
+                    .param(PastaParam.sauce(this.helper))
+                    .place((level, center, params) -> this.placePenne(level, center, params.rotation(), params.pasta(), params.sauce(), params.f("diameter"), params.f("height")));
         }
         return this.shape;
     }
@@ -68,7 +68,7 @@ public class PennePlacer {
                 BlockPos pos = innerSpacePos.toBlockPos();
                 level.setBlock(pos, pasta, Block.UPDATE_ALL);
                 BlockPos above = pos.above();
-                if (level.isStateAtPosition(above, BlockBehaviour.BlockStateBase::isAir)) {
+                if (!sauce.isAir() && level.isStateAtPosition(above, BlockBehaviour.BlockStateBase::isAir)) {
                     level.setBlock(above, sauce, Block.UPDATE_ALL);
                 }
             }

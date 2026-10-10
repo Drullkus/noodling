@@ -13,6 +13,7 @@ import imgui.type.ImString;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 import us.drullk.noodling.Noodling;
@@ -43,7 +44,11 @@ import java.util.Optional;
  * committed (stored on the stack and sent to the server) when the widget finishes its edit. The last row exports the
  * shown shape as a structure template through {@link NoodlerExportClient}.
  *
+ * <p>The pasta block knob is a dropdown of the pasta blocks; the sauce knob is a dropdown whose first entry is "no
+ * sauce" (stored as air) followed by the sauce blocks.
+ *
  * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
+ * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_c3299adc-f781-48a8-9c79-c51c79b26b4b.md}.
  */
 final class NoodlerPanel {
 
@@ -65,6 +70,9 @@ final class NoodlerPanel {
     private final String[] shapeNames;
     private final List<Block> blocks = new ArrayList<>();
     private final String[] blockNames;
+    /** Sauce choices; index 0 is "no sauce" and holds air. */
+    private final List<Block> sauces = new ArrayList<>();
+    private final String[] sauceNames;
 
     private String seed = "";
     private boolean seedLocked;
@@ -81,6 +89,7 @@ final class NoodlerPanel {
     private final float[] axisBuffer = new float[3];
     private final ImFloat angleBuffer = new ImFloat();
     private final ImInt blockIndex = new ImInt();
+    private final ImInt sauceIndex = new ImInt();
     private boolean firstFrame = true;
 
     NoodlerPanel(NoodlerScreen screen) {
@@ -94,6 +103,15 @@ final class NoodlerPanel {
             this.blocks.add(pasta.get());
         }
         this.blockNames = this.blocks.stream().map(block -> I18n.get(block.getDescriptionId())).toArray(String[]::new);
+        this.sauces.add(Blocks.AIR);
+        for (var sauce : Noodling.SAUCE_BLOCKS) {
+            this.sauces.add(sauce.get());
+        }
+        this.sauceNames = new String[this.sauces.size()];
+        this.sauceNames[0] = I18n.get("noodling.gui.no_sauce");
+        for (int i = 1; i < this.sauces.size(); i++) {
+            this.sauceNames[i] = I18n.get(this.sauces.get(i).getDescriptionId());
+        }
     }
 
     /** Replaces the edited copy with {@code state}. */
@@ -286,6 +304,15 @@ final class NoodlerPanel {
                 ImGui.setNextItemWidth(px(KNOB_WIDTH));
                 if (ImGui.combo(label, this.blockIndex, this.blockNames)) {
                     return new KnobResult(new ParamValue.Block(this.blocks.get(this.blockIndex.get()).defaultBlockState()), true);
+                }
+                return KnobResult.NONE;
+            }
+            case SAUCE -> {
+                Block block = ((ParamValue.Block) current).state().getBlock();
+                this.sauceIndex.set(Math.max(0, this.sauces.indexOf(block)));
+                ImGui.setNextItemWidth(px(KNOB_WIDTH));
+                if (ImGui.combo(label, this.sauceIndex, this.sauceNames)) {
+                    return new KnobResult(new ParamValue.Block(this.sauces.get(this.sauceIndex.get()).defaultBlockState()), true);
                 }
                 return KnobResult.NONE;
             }

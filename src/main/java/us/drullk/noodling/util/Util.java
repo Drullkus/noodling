@@ -17,6 +17,7 @@ import org.joml.Quaterniond;
 import us.drullk.noodling.Noodling;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
 public class Util {
@@ -29,6 +30,18 @@ public class Util {
             .add(Noodling.SPIRULINA_PASTA_BLOCK, 1)
             .add(Noodling.BEETROOT_PASTA_BLOCK, 2)
             .add(Noodling.SQUID_INK_PASTA_BLOCK, 1)
+            .build();
+
+    /**
+     * One half no sauce (air), one sixth each of the three sauces.
+     *
+     * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_c3299adc-f781-48a8-9c79-c51c79b26b4b.md}.
+     * */
+    private final WeightedList<Supplier<BlockState>> sauceBlocks = WeightedList.<Supplier<BlockState>>builder()
+            .add(Blocks.AIR::defaultBlockState, 3)
+            .add(() -> Noodling.ALFREDO_SAUCE_BLOCK.value().defaultBlockState(), 1)
+            .add(() -> Noodling.CHEDDAR_SAUCE_BLOCK.value().defaultBlockState(), 1)
+            .add(() -> Noodling.TOMATO_SAUCE_BLOCK.value().defaultBlockState(), 1)
             .build();
 
     public void placeSignBlock(ServerLevel level, BlockPos pos, List<Component> textList) {
@@ -46,6 +59,15 @@ public class Util {
 
     public BlockState getRandomPastaBlock(RandomSource random) {
         return this.pastaBlocks.getRandomOrThrow(random).value().defaultBlockState();
+    }
+
+    /**
+     * A sauce block state to put on top of the pasta, or air for no sauce.
+     *
+     * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_c3299adc-f781-48a8-9c79-c51c79b26b4b.md}.
+     * */
+    public BlockState getRandomSauceBlock(RandomSource random) {
+        return this.sauceBlocks.getRandomOrThrow(random).get();
     }
 
     public Quaterniond nextRotation(RandomSource random) {

@@ -2,11 +2,9 @@ package us.drullk.noodling.pasta;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelSimulatedRW;
-import net.minecraft.world.level.LevelWriter;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -43,6 +41,7 @@ public class RadiatoriPlacer {
      * Describes radiatori for the Noodler, keeping the roll order of the hand-written version: diameters, fin count, fin height, frilling, cutoff.
      *
      * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
+     * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_c3299adc-f781-48a8-9c79-c51c79b26b4b.md}.
      */
     public PastaShape shape() {
         if (this.shape == null) {
@@ -61,7 +60,8 @@ public class RadiatoriPlacer {
                     .param(PastaParam.floatSlider("cutoff_radian", (random, siblings) -> Mth.lerp(Mth.square(random.nextFloat()), 0.9f, 2f/3f) * Mth.TWO_PI, siblings -> new PastaParam.Bounds(2f/3f * Mth.TWO_PI, 0.9f * Mth.TWO_PI)))
                     .param(PastaParam.rotation(this.helper))
                     .param(PastaParam.pasta(this.helper))
-                    .place((level, center, params) -> this.placeRadiatori(level, center, params.rotation(), params.pasta(), Blocks.AIR.defaultBlockState(),
+                    .param(PastaParam.sauce(this.helper))
+                    .place((level, center, params) -> this.placeRadiatori(level, center, params.rotation(), params.pasta(), params.sauce(),
                             params.f("diameter_head"), params.f("diameter_tail"), params.f("fin_height"), params.f("fin_width"), params.f("fin_spacing"), params.i("fins"), params.f("cutoff_radian"),
                             params.f("fin_frilling_freq_head"), params.f("fin_frilling_freq_tail"), params.f("fin_frilling_amp_head"), params.f("fin_frilling_amp_tail"), params.f("core_thickness")));
         }
@@ -103,7 +103,7 @@ public class RadiatoriPlacer {
                 BlockPos pos = innerSpacePos.toBlockPos();
                 level.setBlock(pos, pasta, Block.UPDATE_ALL);
                 BlockPos above = pos.above();
-                if (level.isStateAtPosition(above, BlockBehaviour.BlockStateBase::isAir)) {
+                if (!sauce.isAir() && level.isStateAtPosition(above, BlockBehaviour.BlockStateBase::isAir)) {
                     level.setBlock(above, sauce, Block.UPDATE_ALL);
                 }
             }

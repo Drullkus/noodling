@@ -14,6 +14,7 @@ import java.util.Map;
  * parameters declared before it.
  *
  * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
+ * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_c3299adc-f781-48a8-9c79-c51c79b26b4b.md}.
  */
 public final class ResolvedParams {
 
@@ -63,5 +64,10 @@ public final class ResolvedParams {
     /** The pasta block parameter every shape declares. */
     public BlockState pasta() {
         return this.block(PastaParam.PASTA);
+    }
+
+    /** The sauce block parameter every shape declares; air means no sauce. */
+    public BlockState sauce() {
+        return this.block(PastaParam.SAUCE);
     }
 }

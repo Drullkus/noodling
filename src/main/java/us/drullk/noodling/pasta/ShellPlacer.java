@@ -2,11 +2,9 @@ package us.drullk.noodling.pasta;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelSimulatedRW;
-import net.minecraft.world.level.LevelWriter;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -43,6 +41,7 @@ public class ShellPlacer {
      * Describes shells for the Noodler. The height slider's bounds follow the diameter, matching the triangle roll.
      *
      * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
+     * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_c3299adc-f781-48a8-9c79-c51c79b26b4b.md}.
      */
     public PastaShape shape() {
         if (this.shape == null) {
@@ -53,7 +52,8 @@ public class ShellPlacer {
                     .param(PastaParam.floatSlider("taper_factor", (random, siblings) -> Mth.lerp(random.nextFloat(), 2, 3), siblings -> new PastaParam.Bounds(2, 3)))
                     .param(PastaParam.rotation(this.helper))
                     .param(PastaParam.pasta(this.helper))
-                    .place((level, center, params) -> this.placeShell(level, center, params.rotation(), params.pasta(), Blocks.AIR.defaultBlockState(), params.f("height"), params.f("diameter"), params.f("taper_factor"), params.f("thickness")));
+                    .param(PastaParam.sauce(this.helper))
+                    .place((level, center, params) -> this.placeShell(level, center, params.rotation(), params.pasta(), params.sauce(), params.f("height"), params.f("diameter"), params.f("taper_factor"), params.f("thickness")));
         }
         return this.shape;
     }
@@ -73,7 +73,7 @@ public class ShellPlacer {
                 BlockPos pos = innerSpacePos.toBlockPos();
                 level.setBlock(pos, pasta, Block.UPDATE_ALL);
                 BlockPos above = pos.above();
-                if (level.isStateAtPosition(above, BlockBehaviour.BlockStateBase::isAir)) {
+                if (!sauce.isAir() && level.isStateAtPosition(above, BlockBehaviour.BlockStateBase::isAir)) {
                     level.setBlock(above, sauce, Block.UPDATE_ALL);
                 }
             }
