@@ -45,6 +45,10 @@ public class Noodling {
     public static final DeferredBlock<Block> BEETROOT_PASTA_BLOCK = BLOCKS.registerSimpleBlock("beetroot_pasta_block", p -> p.mapColor(MapColor.TERRACOTTA_MAGENTA).strength(0.8F).ignitedByLava());
     public static final DeferredBlock<Block> SQUID_INK_PASTA_BLOCK = BLOCKS.registerSimpleBlock("squid_ink_pasta_block", p -> p.mapColor(MapColor.TERRACOTTA_BLACK).strength(0.8F).ignitedByLava());
 
+    public static final DeferredBlock<Block> ALFREDO_SAUCE_BLOCK = BLOCKS.registerSimpleBlock("alfredo_sauce_block", p -> p.mapColor(MapColor.TERRACOTTA_WHITE).strength(0.8F));
+    public static final DeferredBlock<Block> CHEDDAR_SAUCE_BLOCK = BLOCKS.registerSimpleBlock("cheddar_sauce_block", p -> p.mapColor(MapColor.TERRACOTTA_YELLOW).strength(0.8F));
+    public static final DeferredBlock<Block> TOMATO_SAUCE_BLOCK = BLOCKS.registerSimpleBlock("tomato_sauce_block", p -> p.mapColor(MapColor.TERRACOTTA_RED).strength(0.8F));
+
     public static final List<DeferredBlock<Block>> PASTA_BLOCKS = List.of(TOMATO_PASTA_BLOCK, CARROT_PASTA_BLOCK, WHEAT_PASTA_BLOCK, SPINACH_PASTA_BLOCK, SPIRULINA_PASTA_BLOCK, BEETROOT_PASTA_BLOCK, SQUID_INK_PASTA_BLOCK);
 
     public static final DeferredItem<BlockItem> TOMATO_PASTA_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("tomato_pasta_block", TOMATO_PASTA_BLOCK);
@@ -54,6 +58,10 @@ public class Noodling {
     public static final DeferredItem<BlockItem> SPIRULINA_PASTA_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("spirulina_pasta_block", SPIRULINA_PASTA_BLOCK);
     public static final DeferredItem<BlockItem> BEETROOT_PASTA_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("beetroot_pasta_block", BEETROOT_PASTA_BLOCK);
     public static final DeferredItem<BlockItem> SQUID_INK_PASTA_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("squid_ink_pasta_block", SQUID_INK_PASTA_BLOCK);
+
+    public static final DeferredItem<BlockItem> ALFREDO_SAUCE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("alfredo_sauce_block", ALFREDO_SAUCE_BLOCK);
+    public static final DeferredItem<BlockItem> CHEDDAR_SAUCE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("cheddar_sauce_block", CHEDDAR_SAUCE_BLOCK);
+    public static final DeferredItem<BlockItem> TOMATO_SAUCE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("tomato_sauce_block", TOMATO_SAUCE_BLOCK);
 
     /**
      * The Noodler places random pasta where the player looks. It does not stack, has Epic rarity, no recipe and no
@@ -79,6 +87,9 @@ public class Noodling {
                 output.accept(SPIRULINA_PASTA_BLOCK.get());
                 output.accept(BEETROOT_PASTA_BLOCK.get());
                 output.accept(SQUID_INK_PASTA_BLOCK.get());
+                output.accept(ALFREDO_SAUCE_BLOCK.get());
+                output.accept(CHEDDAR_SAUCE_BLOCK.get());
+                output.accept(TOMATO_SAUCE_BLOCK.get());
             }).build());
 
     /**
