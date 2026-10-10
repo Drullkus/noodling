@@ -206,7 +206,7 @@ def export(path: Path, include_results: bool, max_chars: int, self_path: str | N
                 if not text:
                     continue
                 counts["prompts"] += 1
-                turns.append([f"## Prompt {counts['prompts']} — {fmt_ts(ts)}\n\n**User:**\n\n{text}"])
+                turns.append([f"## Prompt {counts['prompts']} — {fmt_ts(ts)}\n\n### User:\n\n{text}"])
                 continue
             if not isinstance(content, list):
                 continue
@@ -214,7 +214,7 @@ def export(path: Path, include_results: bool, max_chars: int, self_path: str | N
             texts = [x for x in texts if x]
             if texts:
                 counts["prompts"] += 1
-                turns.append([f"## Prompt {counts['prompts']} — {fmt_ts(ts)}\n\n**User:**\n\n" + "\n\n".join(texts)])
+                turns.append([f"## Prompt {counts['prompts']} — {fmt_ts(ts)}\n\n### User:\n\n" + "\n\n".join(texts)])
             if include_results and turns:
                 for b in content:
                     if b.get("type") != "tool_result":
@@ -237,7 +237,7 @@ def export(path: Path, include_results: bool, max_chars: int, self_path: str | N
                 text = (b.get("text") or "").strip()
                 if text:
                     counts["replies"] += 1
-                    turns[-1].append(f"**Claude:**\n\n{text}")
+                    turns[-1].append(f"### Claude:\n\n{text}")
             elif kind == "tool_use":
                 counts["tool_calls"] += 1
                 tool_names[b.get("id")] = b.get("name", "tool")
