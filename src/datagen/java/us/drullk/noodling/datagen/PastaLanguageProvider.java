@@ -52,6 +52,16 @@ public class PastaLanguageProvider extends LanguageProvider {
         add("noodling.gui.axis", "Axis");
         add("noodling.gui.radians", "Radians");
         add("noodling.shape.random", "Random pasta");
+        add("noodling.gui.export", "Export .nbt...");
+        add("noodling.tooltip.noodler.place", "Hold %s to place Pasta");
+        add("noodling.tooltip.noodler.configure", "Click %s to configure pasta generation");
+        add("noodling.export.choosing", "Choose where to save the structure template");
+        add("noodling.export.requesting", "Building the structure template...");
+        add("noodling.export.saved", "Saved structure template to %s");
+        add("noodling.export.cancelled", "Export cancelled");
+        add("noodling.export.failed", "Export failed: %s");
+        add("noodling.export.too_large", "Export failed: the shape is too large to send");
+        add("noodling.export.no_noodler", "Export failed: hold the Noodler in your main hand");
 
         LinkedHashSet<String> paramNames = new LinkedHashSet<>();
         for (PastaShape shape : PastaShapes.ALL) {

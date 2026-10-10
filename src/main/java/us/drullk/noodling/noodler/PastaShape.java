@@ -1,6 +1,6 @@
 package us.drullk.noodling.noodler;
 
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.LevelWriter;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
@@ -14,6 +14,8 @@ import java.util.List;
  *
  * <p>{@link #placeRandom} rolls every parameter in order from one random source, which gives the same results as
  * the hand-written {@code placeRandom*} methods did; the Noodler resolves each parameter from its own seed instead.
+ * Placement writes through {@link LevelWriter}, so a shape can go into a world or into a
+ * {@link RecordingLevelWriter} for export.
  *
  * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
  */
@@ -21,7 +23,7 @@ public final class PastaShape {
 
     @FunctionalInterface
     public interface Placement {
-        void place(ServerLevel level, Vec3 center, ResolvedParams params);
+        void place(LevelWriter level, Vec3 center, ResolvedParams params);
     }
 
     private final String id;
@@ -69,11 +71,11 @@ public final class PastaShape {
         return values;
     }
 
-    public void place(ServerLevel level, Vec3 center, ResolvedParams params) {
+    public void place(LevelWriter level, Vec3 center, ResolvedParams params) {
         this.placement.place(level, center, params);
     }
 
-    public void placeRandom(ServerLevel level, Vec3 center, RandomSource random) {
+    public void placeRandom(LevelWriter level, Vec3 center, RandomSource random) {
         this.place(level, center, this.resolveAll(random));
     }
 

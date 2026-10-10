@@ -8,7 +8,15 @@
   "block.noodling.wheat_pasta_block": "Wheat Pasta Block",
   "item.noodling.noodler": "Noodler",
   "itemGroup.noodling": "Noodling",
+  "noodling.export.cancelled": "Export cancelled",
+  "noodling.export.choosing": "Choose where to save the structure template",
+  "noodling.export.failed": "Export failed: %s",
+  "noodling.export.no_noodler": "Export failed: hold the Noodler in your main hand",
+  "noodling.export.requesting": "Building the structure template...",
+  "noodling.export.saved": "Saved structure template to %s",
+  "noodling.export.too_large": "Export failed: the shape is too large to send",
   "noodling.gui.axis": "Axis",
+  "noodling.gui.export": "Export .nbt...",
   "noodling.gui.lock_seed": "Lock seed",
   "noodling.gui.param_lock": "Lock",
   "noodling.gui.param_seed": "Seed",
@@ -46,5 +54,7 @@
   "noodling.shape.radiatori": "Radiatori",
   "noodling.shape.random": "Random pasta",
   "noodling.shape.shell": "Shell",
-  "noodling.shape.spiral": "Spiral"
+  "noodling.shape.spiral": "Spiral",
+  "noodling.tooltip.noodler.configure": "Click %s to configure pasta generation",
+  "noodling.tooltip.noodler.place": "Hold %s to place Pasta"
 }

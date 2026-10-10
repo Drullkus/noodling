@@ -1,11 +1,15 @@
 package us.drullk.noodling.noodler;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -50,6 +54,16 @@ public class NoodlerItem extends Item {
             screenOpener.accept(hand);
         }
         return InteractionResult.CONSUME;
+    }
+
+    /**
+     * Two tooltip lines that name the keys the Noodler listens to. The keybind components resolve to whatever the
+     * player bound to attack and use, the same mappings the client charge tracker and screen opener check.
+     */
+    @Override
+    public void appendHoverText(ItemStack itemStack, TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag tooltipFlag) {
+        builder.accept(Component.translatable("noodling.tooltip.noodler.place", Component.keybind("key.attack")).withStyle(ChatFormatting.GRAY));
+        builder.accept(Component.translatable("noodling.tooltip.noodler.configure", Component.keybind("key.use")).withStyle(ChatFormatting.GRAY));
     }
 
     /** Sneak + right click reaches the block instead of the GUI, so chests and doors still work. */

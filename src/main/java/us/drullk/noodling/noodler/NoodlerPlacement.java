@@ -27,12 +27,32 @@ public final class NoodlerPlacement {
     private NoodlerPlacement() {
     }
 
+    /** A shape ready to place: the shape, its resolved parameters, and the state the Noodler holds afterwards. */
+    public record Prepared(PastaShape shape, ResolvedParams params, NoodlerState nextState) {
+    }
+
     /** Places one piece of pasta for {@code player} and updates the state on {@code stack}. */
     public static void place(ServerPlayer player, ItemStack stack) {
         ServerLevel level = player.level();
         NoodlerState state = stack.getOrDefault(NoodlerComponents.STATE.get(), NoodlerState.DEFAULT);
+        Prepared prepared = prepare(state, level.getRandom(), false);
 
-        long seed = resolveSeed(state, level.getRandom());
+        Vec3 center = NoodlerRaycast.raycast(player, 1.0F).getLocation();
+        prepared.shape().place(level, center, prepared.params());
+        level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.CROSSBOW_SHOOT, SoundSource.PLAYERS, 1.0F, 1.0F);
+
+        stack.set(NoodlerComponents.STATE.get(), prepared.nextState());
+    }
+
+    /**
+     * Resolves the seed, the shape and every parameter from {@code state}.
+     *
+     * <p>With {@code keepTypedSeed} false the seed follows the placement rule: a locked seed is used, an unlocked one
+     * is re-rolled. With it true (export) the seed text is used whether or not it is locked, and only a blank field
+     * rolls, so an export reproduces the shape the Noodler shows and the Noodler keeps showing it afterwards.
+     */
+    public static Prepared prepare(NoodlerState state, RandomSource random, boolean keepTypedSeed) {
+        long seed = keepTypedSeed ? NoodlerSeeds.parse(state.seed()).orElseGet(random::nextLong) : resolveSeed(state, random);
         PastaShape shape = state.shape().map(PastaShapes::byId).orElse(null);
         Map<String, ParamState> nextParams = new LinkedHashMap<>();
         ResolvedParams resolved;
@@ -43,12 +63,10 @@ public final class NoodlerPlacement {
         } else {
             resolved = resolve(shape, state, seed, nextParams);
         }
-
-        Vec3 center = NoodlerRaycast.raycast(player, 1.0F).getLocation();
-        shape.place(level, center, resolved);
-        level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.CROSSBOW_SHOOT, SoundSource.PLAYERS, 1.0F, 1.0F);
-
-        stack.set(NoodlerComponents.STATE.get(), new NoodlerState(NoodlerSeeds.text(seed), state.seedLocked(), state.shape(), nextParams));
+        // Keep the player's own seed text (for example a word) when it was honoured; show the rolled number otherwise.
+        boolean typedSeedUsed = NoodlerSeeds.parse(state.seed()).isPresent() && (state.seedLocked() || keepTypedSeed);
+        String seedText = typedSeedUsed ? state.seed() : NoodlerSeeds.text(seed);
+        return new Prepared(shape, resolved, new NoodlerState(seedText, state.seedLocked(), state.shape(), nextParams));
     }
 
     /** A locked seed is parsed from the field; otherwise, or when the field is blank, a fresh seed is rolled. */

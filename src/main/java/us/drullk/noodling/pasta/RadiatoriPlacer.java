@@ -1,6 +1,6 @@
 package us.drullk.noodling.pasta;
 
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.LevelWriter;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
@@ -31,7 +31,7 @@ public class RadiatoriPlacer {
      *
      * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
      */
-    public void placeRandomRadiatori(ServerLevel level, Vec3 center, RandomSource random) {
+    public void placeRandomRadiatori(LevelWriter level, Vec3 center, RandomSource random) {
         this.shape().placeRandom(level, center, random);
     }
 
@@ -64,7 +64,7 @@ public class RadiatoriPlacer {
         return this.shape;
     }
 
-    public void placeRadiatori(ServerLevel level, Vec3 center, Quaterniond rotation, BlockState pasta, float diameterHead, float diameterTail, float finHeight, float finWidth, float finSpacing, int fins, float cutoffRadian, float finFrillingFreqHead, float finFrillingFreqTail, float finFrillingAmpHead, float finFrillingAmpTail, float coreThickness) {
+    public void placeRadiatori(LevelWriter level, Vec3 center, Quaterniond rotation, BlockState pasta, float diameterHead, float diameterTail, float finHeight, float finWidth, float finSpacing, int fins, float cutoffRadian, float finFrillingFreqHead, float finFrillingFreqTail, float finFrillingAmpHead, float finFrillingAmpTail, float coreThickness) {
         float radiusHead = diameterHead * 0.5f, radiusTail = diameterTail * 0.5f;
         float diameterMax = Math.max(diameterHead, diameterTail) + finHeight * 2f;
         float finUnit = finWidth + finSpacing;

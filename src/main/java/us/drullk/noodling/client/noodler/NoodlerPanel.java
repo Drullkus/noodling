@@ -40,7 +40,8 @@ import java.util.Optional;
  * table follows with one row per parameter: seed field, lock, knob. Knobs are disabled while their parameter is
  * unlocked; editing a knob clears its seed; typing a seed locks the parameter. Slider bounds are recomputed every
  * frame from the current values of the parameters above them. Edits apply to the local copy at once and are
- * committed (stored on the stack and sent to the server) when the widget finishes its edit.
+ * committed (stored on the stack and sent to the server) when the widget finishes its edit. The last row exports the
+ * shown shape as a structure template through {@link NoodlerExportClient}.
  *
  * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
  */
@@ -171,6 +172,15 @@ final class NoodlerPanel {
                 ImGui.separatorText(I18n.get(shape.descriptionId()));
                 commit |= this.drawParams(shape);
             }
+
+            ImGui.separator();
+            ImGui.beginDisabled(NoodlerExportClient.isBusy());
+            if (ImGui.button(I18n.get("noodling.gui.export"))) {
+                NoodlerExportClient.beginExport();
+            }
+            ImGui.endDisabled();
+            ImGui.sameLine();
+            ImGui.textDisabled(NoodlerExportClient.status().getString());
         }
         ImGui.end();
 

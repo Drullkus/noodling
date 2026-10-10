@@ -1,6 +1,6 @@
 package us.drullk.noodling.pasta;
 
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.LevelWriter;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
@@ -31,7 +31,7 @@ public class ShellPlacer {
      *
      * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
      */
-    public void placeRandomShell(ServerLevel level, Vec3 center, RandomSource random) {
+    public void placeRandomShell(LevelWriter level, Vec3 center, RandomSource random) {
         this.shape().placeRandom(level, center, random);
     }
 
@@ -54,7 +54,7 @@ public class ShellPlacer {
         return this.shape;
     }
 
-    public void placeShell(ServerLevel level, Vec3 center, Quaterniond rotation, BlockState pasta, float height, float diameter, float taperFactor, float thickness) {
+    public void placeShell(LevelWriter level, Vec3 center, Quaterniond rotation, BlockState pasta, float height, float diameter, float taperFactor, float thickness) {
         float halfHeight = height * 0.65f; // Slightly over half, or else orphaned voxels (blocks) will place
         float radius = diameter * 0.5f;
         InnerSpaceIterable spaceIterator = InnerSpaceIterable.centered(center, rotation, diameter, height, diameter);

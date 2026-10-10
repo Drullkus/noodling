@@ -9,7 +9,9 @@ import us.drullk.noodling.Noodling;
 import us.drullk.noodling.client.imgui.ImGuiRenderer;
 import us.drullk.noodling.client.noodler.NoodlerChargeTracker;
 import us.drullk.noodling.client.noodler.NoodlerClientExtensions;
+import us.drullk.noodling.client.noodler.NoodlerExportClient;
 import us.drullk.noodling.client.noodler.NoodlerScreen;
+import us.drullk.noodling.network.NoodlerPayloads;
 import us.drullk.noodling.noodler.NoodlerItem;
 
 /**
@@ -31,5 +33,6 @@ public final class NoodlingClient {
         NeoForge.EVENT_BUS.addListener(NoodlerChargeTracker::onComputeFov);
 
         NoodlerItem.screenOpener = hand -> Minecraft.getInstance().gui.setScreen(new NoodlerScreen(hand));
+        NoodlerPayloads.exportResultSink = NoodlerExportClient::onResult;
     }
 }
