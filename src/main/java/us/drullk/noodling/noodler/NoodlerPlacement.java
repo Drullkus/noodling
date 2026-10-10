@@ -21,8 +21,8 @@ import java.util.OptionalLong;
  */
 public final class NoodlerPlacement {
 
-    /** Ticks left click must be held before a release places pasta: the crossbow's base charge time. */
-    public static final int CHARGE_TICKS = 25;
+    /** Ticks left click must be held before a release places pasta */
+    public static final int CHARGE_TICKS = 10;
 
     private NoodlerPlacement() {
     }
