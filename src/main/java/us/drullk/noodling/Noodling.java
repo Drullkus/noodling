@@ -20,7 +20,6 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import us.drullk.noodling.commands.PastaCommands;
-import us.drullk.noodling.pasta.PastaPlacers;
 
 import java.util.List;
 
@@ -74,9 +73,7 @@ public class Noodling {
         ITEMS.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
 
-        PastaPlacers pastaPlacers = new PastaPlacers();
-
-        NeoForge.EVENT_BUS.addListener(new PastaCommands(pastaPlacers)::registerCommands);
+        NeoForge.EVENT_BUS.addListener(new PastaCommands()::registerCommands);
     }
 
 }

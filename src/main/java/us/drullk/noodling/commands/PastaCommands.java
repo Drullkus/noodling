@@ -8,15 +8,18 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import us.drullk.noodling.Noodling;
-import us.drullk.noodling.pasta.PastaPlacers;
+import us.drullk.noodling.pasta.*;
+import us.drullk.noodling.util.Util;
 
 public class PastaCommands {
 
-    private final PastaPlacers pastaPlacers;
-
-    public PastaCommands(PastaPlacers pastaPlacers) {
-        this.pastaPlacers = pastaPlacers;
-    }
+    private final Util helper = new Util();
+    private final PennePlacer pennePlacer = new PennePlacer(this.helper);
+    private final SpiralPlacer spiralPlacer = new SpiralPlacer(this.helper);
+    private final ShellPlacer shellPlacer = new ShellPlacer(this.helper);
+    private final RadiatoriPlacer radiatoriPlacer = new RadiatoriPlacer(this.helper);
+    private final MacaroniPlacer macaroniPlacer = new MacaroniPlacer(this.helper);
+    private final PipettePlacer pipettePlacer = new PipettePlacer(this.helper);
 
     public void registerCommands(RegisterCommandsEvent event) {
         LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal(Noodling.MODID).requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS));
@@ -32,37 +35,37 @@ public class PastaCommands {
     }
 
     public int penne(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        this.pastaPlacers.placePenne(ctx.getSource().getLevel(), BlockPosArgument.getLoadedBlockPos(ctx, "pos"));
+        this.pennePlacer.placeRandomPenne(ctx.getSource().getLevel(), BlockPosArgument.getLoadedBlockPos(ctx, "pos"));
 
         return 0;
     }
 
     public int spiral(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        this.pastaPlacers.placeSpiral(ctx.getSource().getLevel(), BlockPosArgument.getLoadedBlockPos(ctx, "pos"));
+        this.spiralPlacer.placeRandomSpiral(ctx.getSource().getLevel(), BlockPosArgument.getLoadedBlockPos(ctx, "pos"));
 
         return 0;
     }
 
     public int shell(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        this.pastaPlacers.placeShell(ctx.getSource().getLevel(), BlockPosArgument.getLoadedBlockPos(ctx, "pos"));
+        this.shellPlacer.placeRandomShell(ctx.getSource().getLevel(), BlockPosArgument.getLoadedBlockPos(ctx, "pos"));
 
         return 0;
     }
 
     public int radiatori(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        this.pastaPlacers.placeRadiatori(ctx.getSource().getLevel(), BlockPosArgument.getLoadedBlockPos(ctx, "pos"));
+        this.radiatoriPlacer.placeRandomRadiatori(ctx.getSource().getLevel(), BlockPosArgument.getLoadedBlockPos(ctx, "pos"));
 
         return 0;
     }
 
     public int macaroni(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        this.pastaPlacers.placeMacaroni(ctx.getSource().getLevel(), BlockPosArgument.getLoadedBlockPos(ctx, "pos"));
+        this.macaroniPlacer.placeRandomMacaroni(ctx.getSource().getLevel(), BlockPosArgument.getLoadedBlockPos(ctx, "pos"));
 
         return 0;
     }
 
     public int pipette(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        this.pastaPlacers.placePipette(ctx.getSource().getLevel(), BlockPosArgument.getLoadedBlockPos(ctx, "pos"));
+        this.pipettePlacer.placeRandomPipette(ctx.getSource().getLevel(), BlockPosArgument.getLoadedBlockPos(ctx, "pos"));
 
         return 0;
     }
