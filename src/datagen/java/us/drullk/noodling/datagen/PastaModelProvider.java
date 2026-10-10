@@ -17,10 +17,10 @@ import net.minecraft.world.level.block.Block;
 import us.drullk.noodling.Noodling;
 
 /**
- * Generates block states, block models and item models for the pasta blocks.
+ * Generates block states, block models and item models for the pasta and sauce blocks.
  *
- * <p>Each pasta block is a plain {@code cube_all} whose texture is the block's registry name without the
- * {@code _block} suffix (for example {@code noodling:block/tomato_pasta} for {@code tomato_pasta_block}), matching
+ * <p>Each pasta or sauce block is a plain {@code cube_all} whose texture is the block's registry name without the
+ * {@code _block} suffix (for example {@code noodling:block/tomato_pasta} for {@code tomato_pasta_block} and {@code noodling:block/alfredo_sauce} for {@code alfredo_sauce_block}), matching
  * the files in {@code assets/noodling/textures/block}. Item models are not written explicitly: the vanilla
  * {@link ModelProvider} emits a model for every {@code BlockItem} of this mod that points at its block model.
  *
@@ -28,6 +28,7 @@ import us.drullk.noodling.Noodling;
  *
  * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-08_b2d8f02b-624c-4f11-b4f8-507057a1af26.md}.
  * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
+ * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_a8ab6d8e-ef9d-4e9b-9ff7-9d0f96002449.md}.
  */
 public class PastaModelProvider extends ModelProvider {
 
@@ -45,6 +46,9 @@ public class PastaModelProvider extends ModelProvider {
     protected void registerModels(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
         for (var pasta : Noodling.PASTA_BLOCKS) {
             blockModels.createTrivialBlock(pasta.get(), PASTA_CUBE);
+        }
+        for (var sauce : Noodling.SAUCE_BLOCKS) {
+            blockModels.createTrivialBlock(sauce.get(), PASTA_CUBE);
         }
 
         Item noodler = Noodling.NOODLER.get();

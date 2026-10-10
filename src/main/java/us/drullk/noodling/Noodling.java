@@ -50,6 +50,7 @@ public class Noodling {
     public static final DeferredBlock<Block> TOMATO_SAUCE_BLOCK = BLOCKS.registerSimpleBlock("tomato_sauce_block", p -> p.mapColor(MapColor.TERRACOTTA_RED).strength(0.8F));
 
     public static final List<DeferredBlock<Block>> PASTA_BLOCKS = List.of(TOMATO_PASTA_BLOCK, CARROT_PASTA_BLOCK, WHEAT_PASTA_BLOCK, SPINACH_PASTA_BLOCK, SPIRULINA_PASTA_BLOCK, BEETROOT_PASTA_BLOCK, SQUID_INK_PASTA_BLOCK);
+    public static final List<DeferredBlock<Block>> SAUCE_BLOCKS = List.of(ALFREDO_SAUCE_BLOCK, CHEDDAR_SAUCE_BLOCK, TOMATO_SAUCE_BLOCK);
 
     public static final DeferredItem<BlockItem> TOMATO_PASTA_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("tomato_pasta_block", TOMATO_PASTA_BLOCK);
     public static final DeferredItem<BlockItem> CARROT_PASTA_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("carrot_pasta_block", CARROT_PASTA_BLOCK);

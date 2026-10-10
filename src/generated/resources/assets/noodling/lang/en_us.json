@@ -1,10 +1,13 @@
 {
+  "block.noodling.alfredo_sauce_block": "Alfredo Sauce Block",
   "block.noodling.beetroot_pasta_block": "Beetroot Pasta Block",
   "block.noodling.carrot_pasta_block": "Carrot Pasta Block",
+  "block.noodling.cheddar_sauce_block": "Cheddar Sauce Block",
   "block.noodling.spinach_pasta_block": "Spinach Pasta Block",
   "block.noodling.spirulina_pasta_block": "Spirulina Pasta Block",
   "block.noodling.squid_ink_pasta_block": "Squid Ink Pasta Block",
   "block.noodling.tomato_pasta_block": "Tomato Pasta Block",
+  "block.noodling.tomato_sauce_block": "Tomato Sauce Block",
   "block.noodling.wheat_pasta_block": "Wheat Pasta Block",
   "item.noodling.noodler": "Noodler",
   "itemGroup.noodling": "Noodling",

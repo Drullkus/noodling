@@ -16,7 +16,7 @@ import java.util.Locale;
 /**
  * Generates {@code assets/noodling/lang/en_us.json}.
  *
- * <p>Block names are derived from the registry name by title-casing each underscore-separated word, so
+ * <p>Pasta and sauce block names are derived from the registry name by title-casing each underscore-separated word, so
  * {@code squid_ink_pasta_block} becomes "Squid Ink Pasta Block". The block items share the block's description id
  * (see {@code Item.Properties#useBlockDescriptionPrefix}), so one entry covers both.
  *
@@ -25,6 +25,7 @@ import java.util.Locale;
  *
  * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-08_b2d8f02b-624c-4f11-b4f8-507057a1af26.md}.
  * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
+ * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_a8ab6d8e-ef9d-4e9b-9ff7-9d0f96002449.md}.
  */
 public class PastaLanguageProvider extends LanguageProvider {
 
@@ -37,8 +38,10 @@ public class PastaLanguageProvider extends LanguageProvider {
         add("itemGroup." + Noodling.MODID, "Noodling");
 
         for (var pasta : Noodling.PASTA_BLOCKS) {
-            Block block = pasta.get();
-            add(block, titleCase(BuiltInRegistries.BLOCK.getKey(block).getPath()));
+            addBlockName(pasta.get());
+        }
+        for (var sauce : Noodling.SAUCE_BLOCKS) {
+            addBlockName(sauce.get());
         }
 
         add(Noodling.NOODLER.get(), "Noodler");
@@ -72,6 +75,10 @@ public class PastaLanguageProvider extends LanguageProvider {
                 }
             }
         }
+    }
+
+    private void addBlockName(Block block) {
+        add(block, titleCase(BuiltInRegistries.BLOCK.getKey(block).getPath()));
     }
 
     private static String titleCase(String registryPath) {
