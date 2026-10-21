@@ -16,15 +16,15 @@ import tamaized.beanification.Component;
 import tamaized.beanification.PostConstruct;
 import us.drullk.noodling.Noodling;
 import us.drullk.noodling.noodler.PastaShape;
-import us.drullk.noodling.noodler.PastaShapeLookup;
+import us.drullk.noodling.noodler.PastaShapes;
 
 @Component
 public class PastaCommands {
 
-    private final PastaShapeLookup pastaShapeLookup;
+    private final PastaShapes pastaShapes;
 
-    public PastaCommands(@Autowired PastaShapeLookup pastaShapeLookup) {
-        this.pastaShapeLookup = pastaShapeLookup;
+    public PastaCommands(@Autowired PastaShapes pastaShapes) {
+        this.pastaShapes = pastaShapes;
     }
 
     @PostConstruct
@@ -35,7 +35,7 @@ public class PastaCommands {
     public void registerCommands(RegisterCommandsEvent event) {
         LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal(Noodling.MODID).requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS));
 
-        for (PastaShape pastaShape : this.pastaShapeLookup) {
+        for (PastaShape pastaShape : this.pastaShapes) {
             root.then(
                     Commands.literal(pastaShape.id()).executes(this.buildPastaExecutor(pastaShape))
                             .then(Commands.argument("pos", Vec3Argument.vec3(true)).executes(this.buildPositionalPastaExecutor(pastaShape)))

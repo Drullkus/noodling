@@ -8,7 +8,7 @@ import tamaized.beanification.Autowired;
 import us.drullk.noodling.Noodling;
 import us.drullk.noodling.noodler.PastaParam;
 import us.drullk.noodling.noodler.PastaShape;
-import us.drullk.noodling.noodler.PastaShapeLookup;
+import us.drullk.noodling.noodler.PastaShapes;
 
 import java.util.LinkedHashSet;
 
@@ -32,7 +32,7 @@ import java.util.Locale;
 public class PastaLanguageProvider extends LanguageProvider {
 
     @Autowired
-    private static PastaShapeLookup pastaShapeLookup;
+    private static PastaShapes pastaShapes;
 
     public PastaLanguageProvider(PackOutput output) {
         super(output, Noodling.MODID, "en_us");
@@ -73,7 +73,7 @@ public class PastaLanguageProvider extends LanguageProvider {
         add("noodling.export.no_noodler", "Export failed: hold the Noodler in your main hand");
 
         LinkedHashSet<String> paramNames = new LinkedHashSet<>();
-        for (PastaShape shape : pastaShapeLookup) {
+        for (PastaShape shape : pastaShapes) {
             add(shape.descriptionId(), titleCase(shape.id()));
             for (PastaParam param : shape.params()) {
                 if (paramNames.add(param.name())) {

@@ -31,13 +31,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class PastaShapesTest {
 
     @Autowired
-    private static PastaShapeLookup pastaShapeLookup;
+    private static PastaShapes pastaShapes;
 
     private static final int ROLLS = 300;
     private static final float TOLERANCE = 1.0e-4F;
 
     static List<PastaShape> shapes() {
-        return pastaShapeLookup.getList();
+        return pastaShapes.getList();
     }
 
     @Test
@@ -50,7 +50,7 @@ class PastaShapesTest {
             PastaParam sauce = shape.param(PastaParam.SAUCE);
             assertNotNull(sauce, shape.id() + " has no sauce block");
             assertEquals(PastaParam.Kind.SAUCE, sauce.kind(), shape.id() + " sauce has the wrong kind");
-            assertEquals(shape, pastaShapeLookup.byId(shape.id()));
+            assertEquals(shape, pastaShapes.byId(shape.id()));
         }
     }
 
@@ -125,7 +125,7 @@ class PastaShapesTest {
 
     @Test
     void lockedSeedIsDeterministicAndUnlockedParamsFollowTheNoodlerSeed() {
-        PastaShape shell = pastaShapeLookup.byId("shell");
+        PastaShape shell = pastaShapes.byId("shell");
         assertNotNull(shell);
         NoodlerState state = NoodlerState.DEFAULT.withParams(Map.of("diameter", new ParamState("1234", true, Optional.empty())));
 
@@ -153,7 +153,7 @@ class PastaShapesTest {
 
     @Test
     void manualValueIsUsedAsTyped() {
-        PastaShape penne = pastaShapeLookup.byId("penne");
+        PastaShape penne = pastaShapes.byId("penne");
         assertNotNull(penne);
         NoodlerState state = NoodlerState.DEFAULT.withParams(Map.of("height", new ParamState("", true, Optional.of(ParamValue.Num.of(64.25F)))));
         Map<String, ParamState> out = new LinkedHashMap<>();
@@ -164,7 +164,7 @@ class PastaShapesTest {
 
     @Test
     void lockedWithoutSeedOrValueRollsAndRecordsASeed() {
-        PastaShape penne = pastaShapeLookup.byId("penne");
+        PastaShape penne = pastaShapes.byId("penne");
         assertNotNull(penne);
         NoodlerState state = NoodlerState.DEFAULT.withParams(Map.of("height", new ParamState("", true, Optional.empty())));
         Map<String, ParamState> out = new LinkedHashMap<>();

@@ -23,7 +23,7 @@ import java.util.OptionalLong;
 public final class NoodlerPlacement {
 
     @Autowired
-    private static PastaShapeLookup pastaShapeLookup;
+    private static PastaShapes pastaShapes;
 
     /** Ticks left click must be held before a release places pasta */
     public static final int CHARGE_TICKS = 10;
@@ -57,11 +57,11 @@ public final class NoodlerPlacement {
      */
     public static Prepared prepare(NoodlerState state, RandomSource random, boolean keepTypedSeed) {
         long seed = keepTypedSeed ? NoodlerSeeds.parse(state.seed()).orElseGet(random::nextLong) : resolveSeed(state, random);
-        PastaShape shape = state.shape().map(pastaShapeLookup::byId).orElse(null);
+        PastaShape shape = state.shape().map(pastaShapes::byId).orElse(null);
         Map<String, ParamState> nextParams = new LinkedHashMap<>();
         ResolvedParams resolved;
         if (shape == null) {
-            shape = pastaShapeLookup.getRandom(RandomSource.create(seed));
+            shape = pastaShapes.getRandom(RandomSource.create(seed));
             resolved = resolve(shape, NoodlerState.DEFAULT, seed, nextParams);
             nextParams = state.params();
         } else {

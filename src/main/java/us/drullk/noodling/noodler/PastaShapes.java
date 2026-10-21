@@ -13,13 +13,13 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
-public class PastaShapeLookup implements Iterable<PastaShape> {
+public class PastaShapes implements Iterable<PastaShape> {
 
     private final Map<String, PastaShape> all;
     private final List<PastaShape> pastaShapeList;
     private final int size;
 
-    public PastaShapeLookup(@Directory(PastaShape.class) List<PastaShape> pastaShapeList) {
+    public PastaShapes(@Directory(PastaShape.class) List<PastaShape> pastaShapeList) {
         this.pastaShapeList = pastaShapeList;
         this.size = pastaShapeList.size();
         this.all = pastaShapeList.stream().collect(Collectors.toUnmodifiableMap(PastaShape::id, Function.identity()));
@@ -27,10 +27,6 @@ public class PastaShapeLookup implements Iterable<PastaShape> {
 
     public @Nullable PastaShape byId(String id) {
         return this.all.get(id);
-    }
-
-    public Map<String, PastaShape> getAll() {
-        return this.all;
     }
 
     public List<PastaShape> getList() {

@@ -40,7 +40,7 @@ import us.drullk.noodling.noodler.*;
 public final class NoodlerScreen extends Screen {
 
     @Autowired(dist = Dist.CLIENT)
-    private static PastaShapeLookup pastaShapeLookup;
+    private static PastaShapes pastaShapes;
 
     /** Length of each axis arrow, in blocks. */
     private static final double AXIS_LENGTH = 8.0;
@@ -55,7 +55,7 @@ public final class NoodlerScreen extends Screen {
     public NoodlerScreen(InteractionHand hand) {
         super(Component.translatable("noodling.gui.title"));
         this.hand = hand;
-        this.panel = new NoodlerPanel(this, pastaShapeLookup);
+        this.panel = new NoodlerPanel(this, pastaShapes);
         this.panel.load(this.currentState());
     }
 

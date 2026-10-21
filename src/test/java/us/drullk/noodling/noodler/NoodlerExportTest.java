@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class NoodlerExportTest {
 
     @Autowired
-    private static PastaShapeLookup pastaShapeLookup;
+    private static PastaShapes pastaShapes;
 
     @Test
     void recordedBlocksLoadAsStructureTemplate() {
@@ -56,7 +56,7 @@ class NoodlerExportTest {
 
     @Test
     void shapeExportsAndCompressedBytesRoundTrip() throws IOException {
-        PastaShape penne = pastaShapeLookup.byId("penne");
+        PastaShape penne = pastaShapes.byId("penne");
         RecordingLevelWriter writer = new RecordingLevelWriter();
         penne.placeRandom(writer, Vec3.ZERO, RandomSource.create(11L));
         assertFalse(writer.blocks().isEmpty());
