@@ -20,7 +20,7 @@ import java.util.List;
  *
  * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
  */
-public final class PastaShape {
+public final class PastaShape implements Comparable<PastaShape> {
 
     @FunctionalInterface
     public interface Placement {
@@ -78,6 +78,11 @@ public final class PastaShape {
 
     public void placeRandom(LevelSimulatedRW level, Vec3 center, RandomSource random) {
         this.place(level, center, this.resolveAll(random));
+    }
+
+    @Override
+    public int compareTo(PastaShape o) {
+        return this.id.compareTo(o.id);
     }
 
     public static final class Builder {

@@ -20,9 +20,9 @@ public class PastaShapes implements Iterable<PastaShape> {
     private final int size;
 
     public PastaShapes(@Directory(PastaShape.class) List<PastaShape> pastaShapeList) {
-        this.pastaShapeList = pastaShapeList;
-        this.size = pastaShapeList.size();
-        this.all = pastaShapeList.stream().collect(Collectors.toUnmodifiableMap(PastaShape::id, Function.identity()));
+        this.pastaShapeList = pastaShapeList.stream().sorted().toList();
+        this.size = this.pastaShapeList.size();
+        this.all = this.pastaShapeList.stream().collect(Collectors.toUnmodifiableMap(PastaShape::id, Function.identity()));
     }
 
     public @Nullable PastaShape byId(String id) {
