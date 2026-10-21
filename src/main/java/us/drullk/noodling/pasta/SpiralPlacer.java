@@ -9,6 +9,8 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaterniond;
+import tamaized.beanification.Autowired;
+import tamaized.beanification.Component;
 import us.drullk.noodling.shape.InnerSpaceIterable;
 import us.drullk.noodling.shape.InnerSpacePos;
 import org.jspecify.annotations.Nullable;
@@ -16,12 +18,13 @@ import us.drullk.noodling.noodler.PastaParam;
 import us.drullk.noodling.noodler.PastaShape;
 import us.drullk.noodling.util.Util;
 
+@Component
 public class SpiralPlacer {
 
     private final Util helper;
     private @Nullable PastaShape shape;
 
-    public SpiralPlacer(Util helper) {
+    public SpiralPlacer(@Autowired Util helper) {
         this.helper = helper;
     }
 

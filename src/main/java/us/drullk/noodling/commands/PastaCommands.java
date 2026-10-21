@@ -9,20 +9,44 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import tamaized.beanification.Autowired;
+import tamaized.beanification.Component;
+import tamaized.beanification.PostConstruct;
 import us.drullk.noodling.Noodling;
 import us.drullk.noodling.pasta.*;
-import us.drullk.noodling.util.Util;
 
+@Component
 public class PastaCommands {
 
-    private final Util helper = new Util();
-    private final PennePlacer pennePlacer = new PennePlacer(this.helper);
-    private final SpiralPlacer spiralPlacer = new SpiralPlacer(this.helper);
-    private final ShellPlacer shellPlacer = new ShellPlacer(this.helper);
-    private final RadiatoriPlacer radiatoriPlacer = new RadiatoriPlacer(this.helper);
-    private final MacaroniPlacer macaroniPlacer = new MacaroniPlacer(this.helper);
-    private final PipettePlacer pipettePlacer = new PipettePlacer(this.helper);
+    private final PennePlacer pennePlacer;
+    private final SpiralPlacer spiralPlacer;
+    private final ShellPlacer shellPlacer;
+    private final RadiatoriPlacer radiatoriPlacer;
+    private final MacaroniPlacer macaroniPlacer;
+    private final PipettePlacer pipettePlacer;
+
+    public PastaCommands(
+            @Autowired PennePlacer pennePlacer,
+            @Autowired SpiralPlacer spiralPlacer,
+            @Autowired ShellPlacer shellPlacer,
+            @Autowired RadiatoriPlacer radiatoriPlacer,
+            @Autowired MacaroniPlacer macaroniPlacer,
+            @Autowired PipettePlacer pipettePlacer
+    ) {
+        this.pennePlacer = pennePlacer;
+        this.spiralPlacer = spiralPlacer;
+        this.shellPlacer = shellPlacer;
+        this.radiatoriPlacer = radiatoriPlacer;
+        this.macaroniPlacer = macaroniPlacer;
+        this.pipettePlacer = pipettePlacer;
+    }
+
+    @PostConstruct
+    public void registerListener() {
+        NeoForge.EVENT_BUS.addListener(this::registerCommands);
+    }
 
     public void registerCommands(RegisterCommandsEvent event) {
         LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal(Noodling.MODID).requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS));

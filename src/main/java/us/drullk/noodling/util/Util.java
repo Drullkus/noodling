@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
+@tamaized.beanification.Component
 public class Util {
 
     private final WeightedList<DeferredBlock<Block>> pastaBlocks = WeightedList.<DeferredBlock<Block>>builder()

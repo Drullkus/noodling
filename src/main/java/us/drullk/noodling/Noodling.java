@@ -1,7 +1,7 @@
 package us.drullk.noodling;
 
-import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
+import tamaized.beanification.BeanContext;
 
 import com.mojang.logging.LogUtils;
 
@@ -20,7 +20,6 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import us.drullk.noodling.commands.PastaCommands;
 import us.drullk.noodling.network.NoodlerPayloads;
 import us.drullk.noodling.noodler.NoodlerComponents;
 import us.drullk.noodling.noodler.NoodlerItem;
@@ -104,8 +103,10 @@ public class Noodling {
         CREATIVE_MODE_TABS.register(modEventBus);
         NoodlerComponents.REGISTER.register(modEventBus);
         modEventBus.addListener(NoodlerPayloads::register);
+    }
 
-        NeoForge.EVENT_BUS.addListener(new PastaCommands()::registerCommands);
+    static {
+        BeanContext.init(MODID);
     }
 
 }
