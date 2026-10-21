@@ -24,8 +24,8 @@ public final class PastaShapes {
     private static final Util HELPER = new Util();
 
     public static final List<PastaShape> ALL = List.of(
-            new PennePlacer(HELPER).shape(),
-            new SpiralPlacer(HELPER).shape(),
+            PennePlacer.shape(new PennePlacer(), new Util()),
+            SpiralPlacer.shape(new SpiralPlacer(), new Util()),
             new ShellPlacer(HELPER).shape(),
             new RadiatoriPlacer(HELPER).shape(),
             new MacaroniPlacer(HELPER).shape(),

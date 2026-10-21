@@ -15,28 +15,29 @@ import tamaized.beanification.Autowired;
 import tamaized.beanification.Component;
 import tamaized.beanification.PostConstruct;
 import us.drullk.noodling.Noodling;
+import us.drullk.noodling.noodler.PastaShape;
 import us.drullk.noodling.pasta.*;
 
 @Component
 public class PastaCommands {
 
-    private final PennePlacer pennePlacer;
-    private final SpiralPlacer spiralPlacer;
+    private final PastaShape penneShape;
+    private final PastaShape spiralShape;
     private final ShellPlacer shellPlacer;
     private final RadiatoriPlacer radiatoriPlacer;
     private final MacaroniPlacer macaroniPlacer;
     private final PipettePlacer pipettePlacer;
 
     public PastaCommands(
-            @Autowired PennePlacer pennePlacer,
-            @Autowired SpiralPlacer spiralPlacer,
+            @Autowired("penneShape") PastaShape penneShape,
+            @Autowired("spiralShape") PastaShape spiralShape,
             @Autowired ShellPlacer shellPlacer,
             @Autowired RadiatoriPlacer radiatoriPlacer,
             @Autowired MacaroniPlacer macaroniPlacer,
             @Autowired PipettePlacer pipettePlacer
     ) {
-        this.pennePlacer = pennePlacer;
-        this.spiralPlacer = spiralPlacer;
+        this.penneShape = penneShape;
+        this.spiralShape = spiralShape;
         this.shellPlacer = shellPlacer;
         this.radiatoriPlacer = radiatoriPlacer;
         this.macaroniPlacer = macaroniPlacer;
@@ -66,7 +67,7 @@ public class PastaCommands {
         Vec3 pos = Vec3Argument.getVec3(ctx, "pos");
         RandomSource random = level.getRandom().forkPositional().at(BlockPos.containing(pos));
 
-        this.pennePlacer.shape().placeRandom(level, pos, random);
+        this.penneShape.placeRandom(level, pos, random);
 
         return 0;
     }
@@ -76,7 +77,7 @@ public class PastaCommands {
         Vec3 pos = Vec3Argument.getVec3(ctx, "pos");
         RandomSource random = level.getRandom().forkPositional().at(BlockPos.containing(pos));
 
-        this.spiralPlacer.shape().placeRandom(level, pos, random);
+        this.spiralShape.placeRandom(level, pos, random);
 
         return 0;
     }

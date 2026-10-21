@@ -9,10 +9,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaterniond;
 import tamaized.beanification.Autowired;
+import tamaized.beanification.Bean;
 import tamaized.beanification.Component;
 import us.drullk.noodling.shape.InnerSpaceIterable;
 import us.drullk.noodling.shape.InnerSpacePos;
-import org.jspecify.annotations.Nullable;
 import us.drullk.noodling.noodler.PastaParam;
 import us.drullk.noodling.noodler.PastaShape;
 import us.drullk.noodling.util.Util;
@@ -20,30 +20,21 @@ import us.drullk.noodling.util.Util;
 @Component
 public class PennePlacer {
 
-    private final Util helper;
-    private @Nullable PastaShape shape;
-
-    public PennePlacer(@Autowired Util helper) {
-        this.helper = helper;
-    }
-
     /**
      * Describes penne for the Noodler: diameter and height sliders, then the rotation and the pasta block.
      *
      * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
      * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_c3299adc-f781-48a8-9c79-c51c79b26b4b.md}.
      */
-    public PastaShape shape() {
-        if (this.shape == null) {
-            this.shape = PastaShape.builder("penne")
-                    .param(PastaParam.floatSlider("diameter", (random, siblings) -> Mth.lerp(random.nextFloat(), 12, 16), siblings -> new PastaParam.Bounds(12, 16)))
-                    .param(PastaParam.floatSlider("height", (random, siblings) -> Mth.lerp(random.nextFloat(), 50, 80), siblings -> new PastaParam.Bounds(50, 80)))
-                    .param(PastaParam.rotation(this.helper))
-                    .param(PastaParam.pasta(this.helper))
-                    .param(PastaParam.sauce(this.helper))
-                    .place((level, center, params) -> this.placePenne(level, center, params.rotation(), params.pasta(), params.sauce(), params.f("diameter"), params.f("height")));
-        }
-        return this.shape;
+    @Bean("penneShape")
+    public static PastaShape shape(@Autowired PennePlacer pennePlacer, @Autowired Util helper) {
+        return PastaShape.builder("penne")
+                .param(PastaParam.floatSlider("diameter", (random, siblings) -> Mth.lerp(random.nextFloat(), 12, 16), siblings -> new PastaParam.Bounds(12, 16)))
+                .param(PastaParam.floatSlider("height", (random, siblings) -> Mth.lerp(random.nextFloat(), 50, 80), siblings -> new PastaParam.Bounds(50, 80)))
+                .param(PastaParam.rotation(helper))
+                .param(PastaParam.pasta(helper))
+                .param(PastaParam.sauce(helper))
+                .place((level, center, params) -> pennePlacer.placePenne(level, center, params.rotation(), params.pasta(), params.sauce(), params.f("diameter"), params.f("height")));
     }
 
     public void placePenne(LevelSimulatedRW level, Vec3 center, Quaterniond rotation, BlockState pasta, BlockState sauce, float diameter, float height) {
