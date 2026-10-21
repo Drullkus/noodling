@@ -9,10 +9,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaterniond;
 import tamaized.beanification.Autowired;
+import tamaized.beanification.Bean;
 import tamaized.beanification.Component;
 import us.drullk.noodling.shape.InnerSpaceIterable;
 import us.drullk.noodling.shape.InnerSpacePos;
-import org.jspecify.annotations.Nullable;
 import us.drullk.noodling.noodler.PastaParam;
 import us.drullk.noodling.noodler.PastaShape;
 import us.drullk.noodling.util.Util;
@@ -20,36 +20,27 @@ import us.drullk.noodling.util.Util;
 @Component
 public class PipettePlacer {
 
-    private final Util helper;
-    private @Nullable PastaShape shape;
-
-    public PipettePlacer(@Autowired Util helper) {
-        this.helper = helper;
-    }
-
     /**
      * Describes pipette pasta for the Noodler. Radius and curve are derived fields that follow the diameter and height; only the two pinch radii are random.
      *
      * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
      * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_c3299adc-f781-48a8-9c79-c51c79b26b4b.md}.
      */
-    public PastaShape shape() {
-        if (this.shape == null) {
-            this.shape = PastaShape.builder("pipette")
-                    .param(PastaParam.floatField("diameter", siblings -> 14f))
-                    .param(PastaParam.floatField("radius", siblings -> siblings.f("diameter") * 0.5f))
-                    .param(PastaParam.floatSlider("pinch_radius_head", (random, siblings) -> Mth.lerp(random.nextFloat(), siblings.f("radius") * 0.5f, siblings.f("radius")), siblings -> new PastaParam.Bounds(siblings.f("radius") * 0.5f, siblings.f("radius"))))
-                    .param(PastaParam.floatSlider("pinch_radius_tail", (random, siblings) -> Mth.lerp(random.nextFloat(), siblings.f("radius") * 0.5f, siblings.f("radius")), siblings -> new PastaParam.Bounds(siblings.f("radius") * 0.5f, siblings.f("radius"))))
-                    .param(PastaParam.floatField("height", siblings -> 25f))
-                    .param(PastaParam.floatField("thickness", siblings -> 3.125f))
-                    .param(PastaParam.floatField("curve", siblings -> siblings.f("height") * 0.75f))
-                    .param(PastaParam.rotation(this.helper))
-                    .param(PastaParam.pasta(this.helper))
-                    .param(PastaParam.sauce(this.helper))
-                    .place((level, center, params) -> this.placePipette(level, center, params.rotation(), params.pasta(), params.sauce(),
-                            params.f("diameter"), params.f("height"), params.f("curve"), params.f("radius"), params.f("pinch_radius_head"), params.f("pinch_radius_tail"), params.f("thickness")));
-        }
-        return this.shape;
+    @Bean("pipetteShape")
+    public static PastaShape shape(@Autowired PipettePlacer pipettePlacer, @Autowired Util helper) {
+        return PastaShape.builder("pipette")
+                .param(PastaParam.floatField("diameter", siblings -> 14f))
+                .param(PastaParam.floatField("radius", siblings -> siblings.f("diameter") * 0.5f))
+                .param(PastaParam.floatSlider("pinch_radius_head", (random, siblings) -> Mth.lerp(random.nextFloat(), siblings.f("radius") * 0.5f, siblings.f("radius")), siblings -> new PastaParam.Bounds(siblings.f("radius") * 0.5f, siblings.f("radius"))))
+                .param(PastaParam.floatSlider("pinch_radius_tail", (random, siblings) -> Mth.lerp(random.nextFloat(), siblings.f("radius") * 0.5f, siblings.f("radius")), siblings -> new PastaParam.Bounds(siblings.f("radius") * 0.5f, siblings.f("radius"))))
+                .param(PastaParam.floatField("height", siblings -> 25f))
+                .param(PastaParam.floatField("thickness", siblings -> 3.125f))
+                .param(PastaParam.floatField("curve", siblings -> siblings.f("height") * 0.75f))
+                .param(PastaParam.rotation(helper))
+                .param(PastaParam.pasta(helper))
+                .param(PastaParam.sauce(helper))
+                .place((level, center, params) -> pipettePlacer.placePipette(level, center, params.rotation(), params.pasta(), params.sauce(),
+                        params.f("diameter"), params.f("height"), params.f("curve"), params.f("radius"), params.f("pinch_radius_head"), params.f("pinch_radius_tail"), params.f("thickness")));
     }
 
     public void placePipette(LevelSimulatedRW level, Vec3 center, Quaterniond rotation, BlockState pasta, BlockState sauce, float diameter, float height, float curve, float radius, float pinchRadiusHead, float pinchRadiusTail, float thickness) {

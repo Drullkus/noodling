@@ -10,10 +10,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaterniond;
 import tamaized.beanification.Autowired;
+import tamaized.beanification.Bean;
 import tamaized.beanification.Component;
 import us.drullk.noodling.shape.InnerSpaceIterable;
 import us.drullk.noodling.shape.InnerSpacePos;
-import org.jspecify.annotations.Nullable;
 import us.drullk.noodling.noodler.PastaParam;
 import us.drullk.noodling.noodler.PastaShape;
 import us.drullk.noodling.util.Util;
@@ -21,32 +21,23 @@ import us.drullk.noodling.util.Util;
 @Component
 public class MacaroniPlacer {
 
-    private final Util helper;
-    private @Nullable PastaShape shape;
-
-    public MacaroniPlacer(@Autowired Util helper) {
-        this.helper = helper;
-    }
-
     /**
      * Describes macaroni for the Noodler. The curve slider's bounds follow the height.
      *
      * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
      * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_c3299adc-f781-48a8-9c79-c51c79b26b4b.md}.
      */
-    public PastaShape shape() {
-        if (this.shape == null) {
-            this.shape = PastaShape.builder("macaroni")
-                    .param(PastaParam.floatSlider("diameter", (random, siblings) -> Mth.lerp(random.nextFloat(), 8, 10), siblings -> new PastaParam.Bounds(8, 10)))
-                    .param(PastaParam.floatSlider("height", (random, siblings) -> random.triangle(35, 5), siblings -> new PastaParam.Bounds(30, 40)))
-                    .param(PastaParam.floatField("thickness", siblings -> 2.5f))
-                    .param(PastaParam.floatSlider("curve", (random, siblings) -> Mth.lerp(Ease.inOutQuad(random.nextFloat()), siblings.f("height") * 0.75f, siblings.f("height") * 2f), siblings -> new PastaParam.Bounds(siblings.f("height") * 0.75f, siblings.f("height") * 2f)))
-                    .param(PastaParam.rotation(this.helper))
-                    .param(PastaParam.pasta(this.helper))
-                    .param(PastaParam.sauce(this.helper))
-                    .place((level, center, params) -> this.placeMacaroni(level, center, params.rotation(), params.pasta(), params.sauce(), params.f("diameter"), params.f("height"), params.f("curve"), params.f("thickness")));
-        }
-        return this.shape;
+    @Bean("macaroniShape")
+    public static PastaShape shape(@Autowired MacaroniPlacer macaroniPlacer, @Autowired Util helper) {
+        return PastaShape.builder("macaroni")
+                .param(PastaParam.floatSlider("diameter", (random, siblings) -> Mth.lerp(random.nextFloat(), 8, 10), siblings -> new PastaParam.Bounds(8, 10)))
+                .param(PastaParam.floatSlider("height", (random, siblings) -> random.triangle(35, 5), siblings -> new PastaParam.Bounds(30, 40)))
+                .param(PastaParam.floatField("thickness", siblings -> 2.5f))
+                .param(PastaParam.floatSlider("curve", (random, siblings) -> Mth.lerp(Ease.inOutQuad(random.nextFloat()), siblings.f("height") * 0.75f, siblings.f("height") * 2f), siblings -> new PastaParam.Bounds(siblings.f("height") * 0.75f, siblings.f("height") * 2f)))
+                .param(PastaParam.rotation(helper))
+                .param(PastaParam.pasta(helper))
+                .param(PastaParam.sauce(helper))
+                .place((level, center, params) -> macaroniPlacer.placeMacaroni(level, center, params.rotation(), params.pasta(), params.sauce(), params.f("diameter"), params.f("height"), params.f("curve"), params.f("thickness")));
     }
 
     public void placeMacaroni(LevelSimulatedRW level, Vec3 center, Quaterniond rotation, BlockState pasta, BlockState sauce, float diameter, float height, float curve, float thickness) {

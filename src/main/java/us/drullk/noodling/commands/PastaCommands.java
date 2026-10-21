@@ -23,25 +23,25 @@ public class PastaCommands {
 
     private final PastaShape penneShape;
     private final PastaShape spiralShape;
-    private final ShellPlacer shellPlacer;
-    private final RadiatoriPlacer radiatoriPlacer;
-    private final MacaroniPlacer macaroniPlacer;
-    private final PipettePlacer pipettePlacer;
+    private final PastaShape shellShape;
+    private final PastaShape radiatoriShape;
+    private final PastaShape macaroniShape;
+    private final PastaShape pipetteShape;
 
     public PastaCommands(
             @Autowired("penneShape") PastaShape penneShape,
             @Autowired("spiralShape") PastaShape spiralShape,
-            @Autowired ShellPlacer shellPlacer,
-            @Autowired RadiatoriPlacer radiatoriPlacer,
-            @Autowired MacaroniPlacer macaroniPlacer,
-            @Autowired PipettePlacer pipettePlacer
+            @Autowired("shellShape") PastaShape shellShape,
+            @Autowired("radiatoriShape") PastaShape radiatoriShape,
+            @Autowired("macaroniShape") PastaShape macaroniShape,
+            @Autowired("pipetteShape") PastaShape pipetteShape
     ) {
         this.penneShape = penneShape;
         this.spiralShape = spiralShape;
-        this.shellPlacer = shellPlacer;
-        this.radiatoriPlacer = radiatoriPlacer;
-        this.macaroniPlacer = macaroniPlacer;
-        this.pipettePlacer = pipettePlacer;
+        this.shellShape = shellShape;
+        this.radiatoriShape = radiatoriShape;
+        this.macaroniShape = macaroniShape;
+        this.pipetteShape = pipetteShape;
     }
 
     @PostConstruct
@@ -87,7 +87,7 @@ public class PastaCommands {
         Vec3 pos = Vec3Argument.getVec3(ctx, "pos");
         RandomSource random = level.getRandom().forkPositional().at(BlockPos.containing(pos));
 
-        this.shellPlacer.shape().placeRandom(level, pos, random);
+        this.shellShape.placeRandom(level, pos, random);
 
         return 0;
     }
@@ -97,7 +97,7 @@ public class PastaCommands {
         Vec3 pos = Vec3Argument.getVec3(ctx, "pos");
         RandomSource random = level.getRandom().forkPositional().at(BlockPos.containing(pos));
 
-        this.radiatoriPlacer.shape().placeRandom(level, pos, random);
+        this.radiatoriShape.placeRandom(level, pos, random);
 
         return 0;
     }
@@ -107,7 +107,7 @@ public class PastaCommands {
         Vec3 pos = Vec3Argument.getVec3(ctx, "pos");
         RandomSource random = level.getRandom().forkPositional().at(BlockPos.containing(pos));
 
-        this.macaroniPlacer.shape().placeRandom(level, pos, random);
+        this.macaroniShape.placeRandom(level, pos, random);
 
         return 0;
     }
@@ -117,7 +117,7 @@ public class PastaCommands {
         Vec3 pos = Vec3Argument.getVec3(ctx, "pos");
         RandomSource random = level.getRandom().forkPositional().at(BlockPos.containing(pos));
 
-        this.pipettePlacer.shape().placeRandom(level, pos, random);
+        this.pipetteShape.placeRandom(level, pos, random);
 
         return 0;
     }

@@ -9,10 +9,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaterniond;
 import tamaized.beanification.Autowired;
+import tamaized.beanification.Bean;
 import tamaized.beanification.Component;
 import us.drullk.noodling.shape.InnerSpaceIterable;
 import us.drullk.noodling.shape.InnerSpacePos;
-import org.jspecify.annotations.Nullable;
 import us.drullk.noodling.noodler.PastaParam;
 import us.drullk.noodling.noodler.PastaShape;
 import us.drullk.noodling.util.Util;
@@ -20,32 +20,23 @@ import us.drullk.noodling.util.Util;
 @Component
 public class ShellPlacer {
 
-    private final Util helper;
-    private @Nullable PastaShape shape;
-
-    public ShellPlacer(@Autowired Util helper) {
-        this.helper = helper;
-    }
-
     /**
      * Describes shells for the Noodler. The height slider's bounds follow the diameter, matching the triangle roll.
      *
      * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
      * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_c3299adc-f781-48a8-9c79-c51c79b26b4b.md}.
      */
-    public PastaShape shape() {
-        if (this.shape == null) {
-            this.shape = PastaShape.builder("shell")
-                    .param(PastaParam.floatSlider("diameter", (random, siblings) -> Mth.lerp(random.nextFloat(), 12, 16), siblings -> new PastaParam.Bounds(12, 16)))
-                    .param(PastaParam.floatField("thickness", siblings -> 2.5f))
-                    .param(PastaParam.floatSlider("height", (random, siblings) -> siblings.f("diameter") * random.triangle(1.25f, 0.2f), siblings -> new PastaParam.Bounds(siblings.f("diameter") * 1.05f, siblings.f("diameter") * 1.45f)))
-                    .param(PastaParam.floatSlider("taper_factor", (random, siblings) -> Mth.lerp(random.nextFloat(), 2, 3), siblings -> new PastaParam.Bounds(2, 3)))
-                    .param(PastaParam.rotation(this.helper))
-                    .param(PastaParam.pasta(this.helper))
-                    .param(PastaParam.sauce(this.helper))
-                    .place((level, center, params) -> this.placeShell(level, center, params.rotation(), params.pasta(), params.sauce(), params.f("height"), params.f("diameter"), params.f("taper_factor"), params.f("thickness")));
-        }
-        return this.shape;
+    @Bean("shellShape")
+    public static PastaShape shape(@Autowired ShellPlacer shellPlacer, @Autowired Util helper) {
+        return PastaShape.builder("shell")
+                .param(PastaParam.floatSlider("diameter", (random, siblings) -> Mth.lerp(random.nextFloat(), 12, 16), siblings -> new PastaParam.Bounds(12, 16)))
+                .param(PastaParam.floatField("thickness", siblings -> 2.5f))
+                .param(PastaParam.floatSlider("height", (random, siblings) -> siblings.f("diameter") * random.triangle(1.25f, 0.2f), siblings -> new PastaParam.Bounds(siblings.f("diameter") * 1.05f, siblings.f("diameter") * 1.45f)))
+                .param(PastaParam.floatSlider("taper_factor", (random, siblings) -> Mth.lerp(random.nextFloat(), 2, 3), siblings -> new PastaParam.Bounds(2, 3)))
+                .param(PastaParam.rotation(helper))
+                .param(PastaParam.pasta(helper))
+                .param(PastaParam.sauce(helper))
+                .place((level, center, params) -> shellPlacer.placeShell(level, center, params.rotation(), params.pasta(), params.sauce(), params.f("height"), params.f("diameter"), params.f("taper_factor"), params.f("thickness")));
     }
 
     public void placeShell(LevelSimulatedRW level, Vec3 center, Quaterniond rotation, BlockState pasta, BlockState sauce, float height, float diameter, float taperFactor, float thickness) {

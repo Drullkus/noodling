@@ -24,12 +24,12 @@ public final class PastaShapes {
     private static final Util HELPER = new Util();
 
     public static final List<PastaShape> ALL = List.of(
-            PennePlacer.shape(new PennePlacer(), new Util()),
-            SpiralPlacer.shape(new SpiralPlacer(), new Util()),
-            new ShellPlacer(HELPER).shape(),
-            new RadiatoriPlacer(HELPER).shape(),
-            new MacaroniPlacer(HELPER).shape(),
-            new PipettePlacer(HELPER).shape()
+            PennePlacer.shape(new PennePlacer(), HELPER),
+            SpiralPlacer.shape(new SpiralPlacer(), HELPER),
+            ShellPlacer.shape(new ShellPlacer(), HELPER),
+            RadiatoriPlacer.shape(new RadiatoriPlacer(), HELPER),
+            MacaroniPlacer.shape(new MacaroniPlacer(), HELPER),
+            PipettePlacer.shape(new PipettePlacer(), HELPER)
     );
 
     private static final Map<String, PastaShape> BY_ID = ALL.stream().collect(Collectors.toUnmodifiableMap(PastaShape::id, Function.identity()));
