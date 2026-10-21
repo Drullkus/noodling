@@ -66,7 +66,7 @@ public class PastaCommands {
         Vec3 pos = Vec3Argument.getVec3(ctx, "pos");
         RandomSource random = level.getRandom().forkPositional().at(BlockPos.containing(pos));
 
-        this.pennePlacer.placeRandomPenne(level, pos, random);
+        this.pennePlacer.shape().placeRandom(level, pos, random);
 
         return 0;
     }
@@ -76,7 +76,7 @@ public class PastaCommands {
         Vec3 pos = Vec3Argument.getVec3(ctx, "pos");
         RandomSource random = level.getRandom().forkPositional().at(BlockPos.containing(pos));
 
-        this.spiralPlacer.placeRandomSpiral(level, pos, random);
+        this.spiralPlacer.shape().placeRandom(level, pos, random);
 
         return 0;
     }
@@ -86,7 +86,7 @@ public class PastaCommands {
         Vec3 pos = Vec3Argument.getVec3(ctx, "pos");
         RandomSource random = level.getRandom().forkPositional().at(BlockPos.containing(pos));
 
-        this.shellPlacer.placeRandomShell(level, pos, random);
+        this.shellPlacer.shape().placeRandom(level, pos, random);
 
         return 0;
     }
@@ -96,7 +96,7 @@ public class PastaCommands {
         Vec3 pos = Vec3Argument.getVec3(ctx, "pos");
         RandomSource random = level.getRandom().forkPositional().at(BlockPos.containing(pos));
 
-        this.radiatoriPlacer.placeRandomRadiatori(level, pos, random);
+        this.radiatoriPlacer.shape().placeRandom(level, pos, random);
 
         return 0;
     }
@@ -106,7 +106,7 @@ public class PastaCommands {
         Vec3 pos = Vec3Argument.getVec3(ctx, "pos");
         RandomSource random = level.getRandom().forkPositional().at(BlockPos.containing(pos));
 
-        this.macaroniPlacer.placeRandomMacaroni(level, pos, random);
+        this.macaroniPlacer.shape().placeRandom(level, pos, random);
 
         return 0;
     }
@@ -116,7 +116,7 @@ public class PastaCommands {
         Vec3 pos = Vec3Argument.getVec3(ctx, "pos");
         RandomSource random = level.getRandom().forkPositional().at(BlockPos.containing(pos));
 
-        this.pipettePlacer.placeRandomPipette(level, pos, random);
+        this.pipettePlacer.shape().placeRandom(level, pos, random);
 
         return 0;
     }

@@ -4,7 +4,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelSimulatedRW;
 import net.minecraft.util.Ease;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -27,18 +26,6 @@ public class MacaroniPlacer {
 
     public MacaroniPlacer(@Autowired Util helper) {
         this.helper = helper;
-    }
-
-    /**
-     * Places a macaroni with every parameter rolled from {@code random}, through {@link #shape()}.
-     *
-     * <p>The random calls happen in the same order as before, so this method still gives the same shape for the same
-     * random source; the Noodler resolves the same parameters from its own seeds instead.
-     *
-     * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
-     */
-    public void placeRandomMacaroni(LevelSimulatedRW level, Vec3 center, RandomSource random) {
-        this.shape().placeRandom(level, center, random);
     }
 
     /**
