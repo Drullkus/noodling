@@ -37,7 +37,7 @@ class PastaShapesTest {
     private static final float TOLERANCE = 1.0e-4F;
 
     static List<PastaShape> shapes() {
-        return pastaShapeLookup.getAll().values().stream().toList();
+        return pastaShapeLookup.getList();
     }
 
     @Test

@@ -10,6 +10,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.phys.Vec3;
 import org.junit.jupiter.api.Test;
+import tamaized.beanification.Autowired;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -27,6 +28,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
  */
 class NoodlerExportTest {
+
+    @Autowired
+    private static PastaShapeLookup pastaShapeLookup;
 
     @Test
     void recordedBlocksLoadAsStructureTemplate() {
@@ -52,7 +56,7 @@ class NoodlerExportTest {
 
     @Test
     void shapeExportsAndCompressedBytesRoundTrip() throws IOException {
-        PastaShape penne = PastaShapes.byId("penne");
+        PastaShape penne = pastaShapeLookup.byId("penne");
         RecordingLevelWriter writer = new RecordingLevelWriter();
         penne.placeRandom(writer, Vec3.ZERO, RandomSource.create(11L));
         assertFalse(writer.blocks().isEmpty());

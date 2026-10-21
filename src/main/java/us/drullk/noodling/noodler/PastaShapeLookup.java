@@ -1,5 +1,7 @@
 package us.drullk.noodling.noodler;
 
+import net.minecraft.util.RandomSource;
+import net.minecraft.util.Util;
 import org.jspecify.annotations.Nullable;
 import tamaized.beanification.Component;
 import tamaized.beanification.Directory;
@@ -27,6 +29,14 @@ public class PastaShapeLookup implements Iterable<PastaShape> {
 
     public Map<String, PastaShape> getAll() {
         return this.all;
+    }
+
+    public List<PastaShape> getList() {
+        return this.pastaShapeList;
+    }
+
+    public PastaShape getRandom(RandomSource random) {
+        return Util.getRandom(this.pastaShapeList, random);
     }
 
     @Override

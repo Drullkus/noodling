@@ -8,6 +8,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
+import tamaized.beanification.Autowired;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -20,6 +21,9 @@ import java.util.OptionalLong;
  * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
  */
 public final class NoodlerPlacement {
+
+    @Autowired
+    private static PastaShapeLookup pastaShapeLookup;
 
     /** Ticks left click must be held before a release places pasta */
     public static final int CHARGE_TICKS = 10;
@@ -53,11 +57,11 @@ public final class NoodlerPlacement {
      */
     public static Prepared prepare(NoodlerState state, RandomSource random, boolean keepTypedSeed) {
         long seed = keepTypedSeed ? NoodlerSeeds.parse(state.seed()).orElseGet(random::nextLong) : resolveSeed(state, random);
-        PastaShape shape = state.shape().map(PastaShapes::byId).orElse(null);
+        PastaShape shape = state.shape().map(pastaShapeLookup::byId).orElse(null);
         Map<String, ParamState> nextParams = new LinkedHashMap<>();
         ResolvedParams resolved;
         if (shape == null) {
-            shape = PastaShapes.ALL.get(RandomSource.create(seed).nextInt(PastaShapes.ALL.size()));
+            shape = pastaShapeLookup.getRandom(RandomSource.create(seed));
             resolved = resolve(shape, NoodlerState.DEFAULT, seed, nextParams);
             nextParams = state.params();
         } else {
