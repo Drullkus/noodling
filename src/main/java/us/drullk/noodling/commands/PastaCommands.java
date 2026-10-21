@@ -36,10 +36,23 @@ public class PastaCommands {
         LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal(Noodling.MODID).requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS));
 
         this.pastaShapeLookup.forEach((name, pastaShape) -> root.then(
-                Commands.literal(name).then(Commands.argument("pos", Vec3Argument.vec3(true)).executes(this.buildPositionalPastaExecutor(pastaShape)))
+                Commands.literal(name).executes(this.buildPastaExecutor(pastaShape))
+                        .then(Commands.argument("pos", Vec3Argument.vec3(true)).executes(this.buildPositionalPastaExecutor(pastaShape)))
         ));
 
         event.getDispatcher().register(root);
+    }
+
+    private Command<CommandSourceStack> buildPastaExecutor(PastaShape pastaShape) {
+        return ctx -> {
+            ServerLevel level = ctx.getSource().getLevel();
+            Vec3 pos = ctx.getSource().getPosition();
+            RandomSource random = level.getRandom().forkPositional().at(BlockPos.containing(pos));
+
+            pastaShape.placeRandom(level, pos, random);
+
+            return 0;
+        };
     }
 
     private Command<CommandSourceStack> buildPositionalPastaExecutor(PastaShape pastaShape) {
