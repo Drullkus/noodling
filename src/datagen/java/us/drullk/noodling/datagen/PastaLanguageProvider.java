@@ -4,10 +4,11 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.LanguageProvider;
+import tamaized.beanification.Autowired;
 import us.drullk.noodling.Noodling;
 import us.drullk.noodling.noodler.PastaParam;
 import us.drullk.noodling.noodler.PastaShape;
-import us.drullk.noodling.noodler.PastaShapes;
+import us.drullk.noodling.noodler.PastaShapeLookup;
 
 import java.util.LinkedHashSet;
 
@@ -29,6 +30,9 @@ import java.util.Locale;
  * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_c3299adc-f781-48a8-9c79-c51c79b26b4b.md}.
  */
 public class PastaLanguageProvider extends LanguageProvider {
+
+    @Autowired
+    private static PastaShapeLookup pastaShapeLookup;
 
     public PastaLanguageProvider(PackOutput output) {
         super(output, Noodling.MODID, "en_us");
@@ -69,7 +73,7 @@ public class PastaLanguageProvider extends LanguageProvider {
         add("noodling.export.no_noodler", "Export failed: hold the Noodler in your main hand");
 
         LinkedHashSet<String> paramNames = new LinkedHashSet<>();
-        for (PastaShape shape : PastaShapes.ALL) {
+        for (PastaShape shape : pastaShapeLookup) {
             add(shape.descriptionId(), titleCase(shape.id()));
             for (PastaParam param : shape.params()) {
                 if (paramNames.add(param.name())) {
