@@ -17,9 +17,11 @@ public class PastaShapeLookup implements Iterable<PastaShape> {
 
     private final Map<String, PastaShape> all;
     private final List<PastaShape> pastaShapeList;
+    private final int size;
 
     public PastaShapeLookup(@Directory(PastaShape.class) List<PastaShape> pastaShapeList) {
         this.pastaShapeList = pastaShapeList;
+        this.size = pastaShapeList.size();
         this.all = pastaShapeList.stream().collect(Collectors.toUnmodifiableMap(PastaShape::id, Function.identity()));
     }
 
@@ -33,6 +35,10 @@ public class PastaShapeLookup implements Iterable<PastaShape> {
 
     public List<PastaShape> getList() {
         return this.pastaShapeList;
+    }
+
+    public int size() {
+        return this.size;
     }
 
     public PastaShape getRandom(RandomSource random) {

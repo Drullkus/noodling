@@ -15,19 +15,17 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.joml.Quaterniond;
 import org.joml.Vector3d;
+import tamaized.beanification.Autowired;
 import us.drullk.noodling.Noodling;
 import us.drullk.noodling.client.imgui.ImGuiInput;
 import us.drullk.noodling.client.imgui.ImGuiRenderer;
 import us.drullk.noodling.client.imgui.NoodlingImGui;
 import us.drullk.noodling.network.NoodlerStatePayload;
-import us.drullk.noodling.noodler.NoodlerComponents;
-import us.drullk.noodling.noodler.NoodlerItem;
-import us.drullk.noodling.noodler.NoodlerRaycast;
-import us.drullk.noodling.noodler.NoodlerState;
-import us.drullk.noodling.noodler.ParamValue;
+import us.drullk.noodling.noodler.*;
 
 /**
  * The Noodler settings screen. Vanilla provides the freed cursor and the darkened, blurred background; everything
@@ -40,6 +38,9 @@ import us.drullk.noodling.noodler.ParamValue;
  * <p>Written by Claude Code; conversation transcript: {@code llm/transcripts/transcript_2026-10-10_25b84f50-3f88-41a1-a942-98824ffe67dc.md}.
  */
 public final class NoodlerScreen extends Screen {
+
+    @Autowired(dist = Dist.CLIENT)
+    private static PastaShapeLookup pastaShapeLookup;
 
     /** Length of each axis arrow, in blocks. */
     private static final double AXIS_LENGTH = 8.0;
@@ -54,7 +55,7 @@ public final class NoodlerScreen extends Screen {
     public NoodlerScreen(InteractionHand hand) {
         super(Component.translatable("noodling.gui.title"));
         this.hand = hand;
-        this.panel = new NoodlerPanel(this);
+        this.panel = new NoodlerPanel(this, pastaShapeLookup);
         this.panel.load(this.currentState());
     }
 

@@ -15,16 +15,12 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.api.distmarker.Dist;
 import org.jspecify.annotations.Nullable;
+import tamaized.beanification.Autowired;
 import us.drullk.noodling.Noodling;
 import us.drullk.noodling.client.imgui.NoodlingImGui;
-import us.drullk.noodling.noodler.NoodlerState;
-import us.drullk.noodling.noodler.ParamState;
-import us.drullk.noodling.noodler.ParamValue;
-import us.drullk.noodling.noodler.PastaParam;
-import us.drullk.noodling.noodler.PastaShape;
-import us.drullk.noodling.noodler.PastaShapes;
-import us.drullk.noodling.noodler.ResolvedParams;
+import us.drullk.noodling.noodler.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -92,12 +88,14 @@ final class NoodlerPanel {
     private final ImInt sauceIndex = new ImInt();
     private boolean firstFrame = true;
 
-    NoodlerPanel(NoodlerScreen screen) {
+    private final PastaShapeLookup pastaShapeLookup; // Autowiring causes classloading crash
+
+    NoodlerPanel(NoodlerScreen screen, PastaShapeLookup pastaShapeLookup) {
         this.screen = screen;
-        this.shapeNames = new String[PastaShapes.ALL.size() + 1];
+        this.shapeNames = new String[pastaShapeLookup.size() + 1];
         this.shapeNames[0] = I18n.get("noodling.shape.random");
-        for (int i = 0; i < PastaShapes.ALL.size(); i++) {
-            this.shapeNames[i + 1] = I18n.get(PastaShapes.ALL.get(i).descriptionId());
+        for (int i = 0; i < pastaShapeLookup.size(); i++) {
+            this.shapeNames[i + 1] = I18n.get(pastaShapeLookup.getList().get(i).descriptionId());
         }
         for (var pasta : Noodling.PASTA_BLOCKS) {
             this.blocks.add(pasta.get());
@@ -112,18 +110,20 @@ final class NoodlerPanel {
         for (int i = 1; i < this.sauces.size(); i++) {
             this.sauceNames[i] = I18n.get(this.sauces.get(i).getDescriptionId());
         }
+
+        this.pastaShapeLookup = pastaShapeLookup;
     }
 
     /** Replaces the edited copy with {@code state}. */
     void load(NoodlerState state) {
         this.seed = state.seed();
         this.seedLocked = state.seedLocked();
-        this.shapeId = state.shape().filter(id -> PastaShapes.byId(id) != null).orElse(null);
+        this.shapeId = state.shape().filter(id -> this.pastaShapeLookup.byId(id) != null).orElse(null);
         this.params.clear();
         this.params.putAll(state.params());
         this.seedBuffer.set(this.seed);
         this.seedLockedBox.set(this.seedLocked);
-        this.shapeIndex.set(this.shapeId == null ? 0 : PastaShapes.ALL.indexOf(PastaShapes.byId(this.shapeId)) + 1);
+        this.shapeIndex.set(this.shapeId == null ? 0 : this.pastaShapeLookup.getList().indexOf(this.pastaShapeLookup.byId(this.shapeId)) + 1);
         this.paramSeedBuffers.clear();
     }
 
@@ -132,7 +132,7 @@ final class NoodlerPanel {
     }
 
     private @Nullable PastaShape shape() {
-        return this.shapeId == null ? null : PastaShapes.byId(this.shapeId);
+        return this.shapeId == null ? null : this.pastaShapeLookup.byId(this.shapeId);
     }
 
     /** The rotation the next placement would use, or null while "random pasta" is selected. */
@@ -179,7 +179,7 @@ final class NoodlerPanel {
             ImGui.setNextItemWidth(px(SEED_WIDTH));
             if (ImGui.combo(I18n.get("noodling.gui.pasta"), this.shapeIndex, this.shapeNames)) {
                 int index = this.shapeIndex.get();
-                this.shapeId = index <= 0 ? null : PastaShapes.ALL.get(index - 1).id();
+                this.shapeId = index <= 0 ? null : this.pastaShapeLookup.getList().get(index - 1).id();
                 this.params.clear();
                 this.paramSeedBuffers.clear();
                 commit = true;
