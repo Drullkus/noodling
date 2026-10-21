@@ -7,7 +7,6 @@ import tamaized.beanification.Directory;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -24,10 +23,6 @@ public class PastaShapeLookup implements Iterable<PastaShape> {
 
     public @Nullable PastaShape byId(String id) {
         return this.all.get(id);
-    }
-
-    public void forEach(BiConsumer<? super String, ? super PastaShape> action) {
-        this.all.forEach(action);
     }
 
     public Map<String, PastaShape> getAll() {

@@ -35,10 +35,12 @@ public class PastaCommands {
     public void registerCommands(RegisterCommandsEvent event) {
         LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal(Noodling.MODID).requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS));
 
-        this.pastaShapeLookup.forEach((name, pastaShape) -> root.then(
-                Commands.literal(name).executes(this.buildPastaExecutor(pastaShape))
-                        .then(Commands.argument("pos", Vec3Argument.vec3(true)).executes(this.buildPositionalPastaExecutor(pastaShape)))
-        ));
+        for (PastaShape pastaShape : this.pastaShapeLookup) {
+            root.then(
+                    Commands.literal(pastaShape.id()).executes(this.buildPastaExecutor(pastaShape))
+                            .then(Commands.argument("pos", Vec3Argument.vec3(true)).executes(this.buildPositionalPastaExecutor(pastaShape)))
+            );
+        }
 
         event.getDispatcher().register(root);
     }
