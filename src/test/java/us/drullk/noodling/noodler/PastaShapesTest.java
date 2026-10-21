@@ -36,14 +36,14 @@ class PastaShapesTest {
     private static final int ROLLS = 300;
     private static final float TOLERANCE = 1.0e-4F;
 
-    static List<PastaShape> shapes() {
-        return pastaShapes.getList();
+    static Iterable<PastaShape> shapes() {
+        return pastaShapes;
     }
 
     @Test
     void everyShapeHasRotationPastaSauceAndUniqueIds() {
         Set<String> ids = new HashSet<>();
-        for (PastaShape shape : shapes()) {
+        for (PastaShape shape : pastaShapes) {
             assertTrue(ids.add(shape.id()), "duplicate shape id " + shape.id());
             assertNotNull(shape.param(PastaParam.ROTATION), shape.id() + " has no rotation");
             assertNotNull(shape.param(PastaParam.PASTA), shape.id() + " has no pasta block");
