@@ -1,7 +1,10 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id 'java-library'
     id 'maven-publish'
     id 'net.neoforged.moddev' version "${mdg_version}"
+    id 'com.gradleup.shadow' version "${shadowjar_version}"
     id 'idea'
 }
 
@@ -34,6 +37,13 @@ sourceSets {
 repositories {
     // imgui-java (binding and natives) is published on Maven Central.
     mavenCentral()
+    maven {
+        name 'Beanification'
+        url 'https://maven.tamaized.com/releases/'
+        content {
+            includeGroup('tamaized')
+        }
+    }
 }
 
 base {
@@ -128,6 +138,7 @@ neoForge.addModdingDependenciesTo(sourceSets.datagen)
 // "optional", meaning it will not be pulled by dependents of this mod.
 configurations {
     runtimeClasspath.extendsFrom localRuntime
+    shade
 }
 
 dependencies {
@@ -163,8 +174,29 @@ dependencies {
     jarJar(implementation("io.github.spair:imgui-java-natives-linux:${imgui_version}"))
     jarJar(implementation("io.github.spair:imgui-java-natives-macos:${imgui_version}"))
 
+    def beanification = "tamaized:beanification:${beanification_version}"
+    implementation beanification
+    shade beanification
+    testImplementation "${beanification}:tests"
+    testCompileOnly "${beanification}:test-sources"
+
     testImplementation "org.junit.jupiter:junit-jupiter:${junit_version}"
     testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+}
+
+tasks.named('jar', Jar).configure {
+    archiveClassifier = 'slim'
+}
+
+tasks.named('shadowJar', ShadowJar).configure {
+    archiveClassifier = ''
+    configurations = [project.configurations.shade]
+    relocate 'tamaized.beanification', "${mod_group_id}.beanification"
+    from tasks.named('jarJar')
+}
+
+tasks.named('build').configure {
+    dependsOn tasks.named('shadowJar')
 }
 
 tasks.named('test', Test).configure {
