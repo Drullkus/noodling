@@ -27,4 +27,8 @@ public class PastaShapeLookup {
         this.all.forEach(action);
     }
 
+    public Map<String, PastaShape> getAll() {
+        return this.all;
+    }
+
 }

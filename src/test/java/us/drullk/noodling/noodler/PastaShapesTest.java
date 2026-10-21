@@ -6,6 +6,7 @@ import net.minecraft.world.level.block.Blocks;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import tamaized.beanification.Autowired;
 import us.drullk.noodling.Noodling;
 
 import java.util.HashSet;
@@ -29,24 +30,27 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class PastaShapesTest {
 
+    @Autowired
+    private static PastaShapeLookup pastaShapeLookup;
+
     private static final int ROLLS = 300;
     private static final float TOLERANCE = 1.0e-4F;
 
     static List<PastaShape> shapes() {
-        return PastaShapes.ALL;
+        return pastaShapeLookup.getAll().values().stream().toList();
     }
 
     @Test
     void everyShapeHasRotationPastaSauceAndUniqueIds() {
         Set<String> ids = new HashSet<>();
-        for (PastaShape shape : PastaShapes.ALL) {
+        for (PastaShape shape : shapes()) {
             assertTrue(ids.add(shape.id()), "duplicate shape id " + shape.id());
             assertNotNull(shape.param(PastaParam.ROTATION), shape.id() + " has no rotation");
             assertNotNull(shape.param(PastaParam.PASTA), shape.id() + " has no pasta block");
             PastaParam sauce = shape.param(PastaParam.SAUCE);
             assertNotNull(sauce, shape.id() + " has no sauce block");
             assertEquals(PastaParam.Kind.SAUCE, sauce.kind(), shape.id() + " sauce has the wrong kind");
-            assertEquals(shape, PastaShapes.byId(shape.id()));
+            assertEquals(shape, pastaShapeLookup.byId(shape.id()));
         }
     }
 
@@ -121,7 +125,7 @@ class PastaShapesTest {
 
     @Test
     void lockedSeedIsDeterministicAndUnlockedParamsFollowTheNoodlerSeed() {
-        PastaShape shell = PastaShapes.byId("shell");
+        PastaShape shell = pastaShapeLookup.byId("shell");
         assertNotNull(shell);
         NoodlerState state = NoodlerState.DEFAULT.withParams(Map.of("diameter", new ParamState("1234", true, Optional.empty())));
 
@@ -149,7 +153,7 @@ class PastaShapesTest {
 
     @Test
     void manualValueIsUsedAsTyped() {
-        PastaShape penne = PastaShapes.byId("penne");
+        PastaShape penne = pastaShapeLookup.byId("penne");
         assertNotNull(penne);
         NoodlerState state = NoodlerState.DEFAULT.withParams(Map.of("height", new ParamState("", true, Optional.of(ParamValue.Num.of(64.25F)))));
         Map<String, ParamState> out = new LinkedHashMap<>();
@@ -160,7 +164,7 @@ class PastaShapesTest {
 
     @Test
     void lockedWithoutSeedOrValueRollsAndRecordsASeed() {
-        PastaShape penne = PastaShapes.byId("penne");
+        PastaShape penne = pastaShapeLookup.byId("penne");
         assertNotNull(penne);
         NoodlerState state = NoodlerState.DEFAULT.withParams(Map.of("height", new ParamState("", true, Optional.empty())));
         Map<String, ParamState> out = new LinkedHashMap<>();
